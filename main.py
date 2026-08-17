@@ -1,11 +1,33 @@
 title = '🎌 Anime Recommender'
 print(title)
 print()
-genre = input('What anime genre do you like? ').lower()
-episode_filter = input('Do you want under 50 or 50+ episodes? (under/over)').lower()
-while episode_filter not in ['under', 'over']:
+def get_user_preferences():
+    genre = input('What anime genre do you like? ').lower()
     episode_filter = input('Do you want under 50 or 50+ episodes? (under/over)').lower()
-print(f'You chose:{genre}')
+    while episode_filter not in ['under', 'over']:
+        episode_filter = input('Do you want under 50 or 50+ episodes? (under/over)').lower()
+    return genre, episode_filter
+
+def ask_to_continue():
+    while True:
+        continue_choice = input('Do you want to continue? (yes/no): ').lower()
+        if continue_choice in ['yes', 'no']:
+            return continue_choice == 'yes'
+        print('Invalid input. Please enter "yes" or "no".')
+def run_search():
+    genre, episode_filter = get_user_preferences()
+
+    recommendations = get_recommendations(animes, genre, episode_filter)
+    genre_found = genre_exists(animes, genre)
+
+    for anime in recommendations:
+        show_anime(anime)
+
+    if not genre_found:
+        print('No anime found for this genre.')
+    elif not recommendations:
+        print('No anime matches your episode filter.')
+
 
 anime1 = {'name':'One Punch Man', 'genres':['action','comedy','superhero'], 'duration':'24 episodes', 'rating':8.4, 'year':2015, 'episodes':24}
 anime2 = {'name':'Death Note', 'genres':['thriller','mystery','psychological'], 'duration':'37 episodes', 'rating':8.6, 'year':2006, 'episodes':37}
@@ -13,12 +35,11 @@ anime3 = {'name':'Attack on Titan', 'genres':['action', 'drama', 'fantasy'], 'du
 
 
 animes = [anime1,anime2,anime3]
-sorted_animes = sorted(animes, key=lambda anime: anime['rating'], reverse=True)
 
 
 
-genre_found = False
-found = False
+
+
 
 
 def show_anime(anime):
@@ -39,19 +60,15 @@ def get_recommendations(animes, genre, episode_filter):
     for anime in animes:
         if matches_filters(anime, genre, episode_filter):
             recommendations.append(anime)
-    return recommendations
+    return sorted(recommendations, key=lambda anime: anime['rating'], reverse=True)
 def genre_exists(animes, genre):
     for anime in animes:
         if genre in anime['genres']:
             return True
     return False
-recommendations = get_recommendations(animes, genre, episode_filter)
-genre_found = genre_exists(animes, genre)
-for anime in recommendations:
-    show_anime(anime)
 
+while True:
+    run_search()
 
-if not genre_found:
-    print('No anime found for this genre.')
-elif not recommendations:
-    print('No anime matches your episode filter.')
+    if not ask_to_continue():
+        break
