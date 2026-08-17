@@ -1,123 +1,77 @@
 # 🎌 Anime Recommender
 
-A beginner-friendly Python anime recommendation app that recommends anime based on **genre** and **number of episodes**, while sorting results by **rating**.
+A beginner Python project that recommends anime based on genre and number of episodes.
 
 ## ✨ Features
 
-* 🔎 Search anime by genre
-* 🎬 Filter anime by episode count
-* ⭐ Sort recommendations by rating
-* 📅 Show release year
-* 📊 Show rating and number of episodes
-* 🏷️ Support multiple genres per anime
-* ⌨️ Validate the episode filter input
+* Filter anime by genre.
+* Filter anime by number of episodes.
+* Sort anime by rating.
+* Display anime information in the terminal.
+* Validate the episode filter input.
+* Organized code using Python functions.
 
-## 🛠️ Built With
+## 🛠️ Technologies
 
-* **Python 3**
-* **Git**
-* **GitHub**
+* Python 3
+* Git
+* GitHub
 
-## 🚀 How It Works
+## 🚀 How to run
 
-The user chooses an anime genre and an episode filter:
+1. Clone the repository.
+2. Open the project folder.
+3. Run:
 
-```text
-Genre: action
-Episode filter: under
+```bash
+python main.py
 ```
 
-The program then:
-
-1. Checks which anime match the selected genre.
-2. Filters them by episode count.
-3. Sorts the results from highest to lowest rating.
-4. Displays the matching anime and its information.
-
-### Example
+4. Enter an anime genre, for example:
 
 ```text
-What anime genre do you like? action
-Do you want under 50 or 50+ episodes? (under/over) under
-
-You chose: action
-
-One Punch Man
-The duration of the anime is: 24 episodes
-The rating is: 8.4
-The year is: 2015
-The number of episodes is: 24
+action
 ```
 
-## 📌 Current Version
+5. Choose an episode filter:
 
-**v0.2 — Filters & Rating Sorting**
+```text
+under
+```
 
-### v0.2 includes
+or:
 
-* Genre-based recommendations
-* Multiple genres
-* Episode filtering (`under` / `over`)
-* Rating-based sorting
-* Anime ratings
-* Release years
-* Episode counts
-* Input validation
+```text
+over
+```
 
-## 🗺️ Roadmap
+## 📌 Version history
 
-* [ ] Improve input validation
-* [ ] Add anime descriptions
-* [ ] Add anime images
-* [ ] Connect to a real anime API
-* [ ] Add more anime data
-* [ ] Create a graphical interface
-* [ ] Add favorites
-* [ ] Improve the overall UI/UX
-* [ ] Prepare the application for mobile platforms
+### v0.3
 
-## 📚 What I'm Learning
+Refactored the recommendation logic into separate functions:
 
-This project is part of my journey learning Python and software development.
+* `show_anime()`
+* `matches_filters()`
+* `get_recommendations()`
+* `genre_exists()`
 
-Throughout the project I'm practicing:
+### v0.2
 
-* Variables and user input
-* Strings and `.lower()`
-* Lists and dictionaries
-* `for` loops
-* `if` / `elif` conditions
-* Boolean values
-* `and` / `not in`
-* `while` loops
-* `sorted()` and `lambda`
-* Git and GitHub
-* Version control
+Added:
 
-## 📈 Version History
+* Genre filtering.
+* Episode filtering.
+* Anime sorting by rating.
 
-### v0.2 — Filters & Rating Sorting
+## 🔮 Future improvements
 
-* Added genre filtering
-* Added episode filtering
-* Added rating sorting
-* Added anime metadata
-* Added input validation
-* Published the first GitHub version
+* Add more anime.
+* Allow repeated searches without restarting the program.
+* Improve the terminal interface.
+* Add a graphical interface with buttons.
+* Connect the application to an anime API.
 
-### v0.1 — Initial Version
+## 📚 About the project
 
-* Created the basic anime recommendation system
-* Added genre-based recommendations
-* Added anime duration information
-
-## 🎯 Project Goal
-
-The goal of this project is to gradually transform a simple Python terminal program into a complete anime recommendation application.
-
-The project will be developed incrementally, with each version introducing new functionality and documenting the learning process.
-
----
-
-**Built while learning Python 🚀**
-
+This project is part of my journey learning Python and software development. Each version documents a new stage of the project and the concepts I have learned along the way.
