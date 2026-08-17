@@ -1,4 +1,6 @@
 title = '🎌 Anime Recommender'
+print(title)
+print()
 genre = input('What anime genre do you like? ').lower()
 episode_filter = input('Do you want under 50 or 50+ episodes? (under/over)').lower()
 while episode_filter not in ['under', 'over']:
@@ -15,25 +17,41 @@ sorted_animes = sorted(animes, key=lambda anime: anime['rating'], reverse=True)
 
 
 
-
+genre_found = False
 found = False
 
 
-for anime in sorted_animes:
+def show_anime(anime):
+    print(f"🎌 {anime['name']}")
+    print(f"⭐ Rating: {anime['rating']}")
+    print(f"📅 Year: {anime['year']}")
+    print(f"🎬 Episodes: {anime['episodes']}")
+    print('-------------------------')
+def matches_filters(anime, genre, episode_filter):
     matches_episode_filter = False
     if episode_filter == 'under':
         matches_episode_filter = anime['episodes'] < 50
     elif episode_filter == 'over':
         matches_episode_filter = anime['episodes'] >= 50
-    if genre in anime['genres'] and matches_episode_filter:
-        found = True
-        print(anime['name'])
-        print(f"The duration of the anime is: {anime['duration']}")
-        print(f"The rating is: {anime['rating']}")
-        print(f"The year is: {anime['year']}")
-        print(f"The number of episodes is: {anime['episodes']}")
-        print(f'Your episode filter: {episode_filter}')
-        print()
+    return genre in anime['genres'] and matches_episode_filter
+def get_recommendations(animes, genre, episode_filter):
+    recommendations = []
+    for anime in animes:
+        if matches_filters(anime, genre, episode_filter):
+            recommendations.append(anime)
+    return recommendations
+def genre_exists(animes, genre):
+    for anime in animes:
+        if genre in anime['genres']:
+            return True
+    return False
+recommendations = get_recommendations(animes, genre, episode_filter)
+genre_found = genre_exists(animes, genre)
+for anime in recommendations:
+    show_anime(anime)
 
-if not found:
-    print('No anime found matching your filters.')
+
+if not genre_found:
+    print('No anime found for this genre.')
+elif not recommendations:
+    print('No anime matches your episode filter.')
