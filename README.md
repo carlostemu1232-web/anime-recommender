@@ -4,16 +4,19 @@ A beginner Python project that recommends anime based on genre and number of epi
 
 ## ✨ Features
 
-* Filter anime by genre.
-* Filter anime by number of episodes.
-* Sort anime by rating.
-* Display anime information in the terminal.
-* Validate the episode filter input.
-* Organized code using Python functions.
+* 🎌 Anime recommendations based on genre.
+* 🎬 Filter anime by number of episodes.
+* ⭐ Recommendations sorted by rating.
+* 🖥️ Graphical interface built with Tkinter.
+* 🔘 Easy episode selection with buttons.
+* 🔎 Recommend anime with a single button.
+* ⚠️ Input validation and useful error messages.
+* 📊 Displays anime rating, year and number of episodes.
 
 ## 🛠️ Technologies
 
 * Python 3
+* Tkinter
 * Git
 * GitHub
 
@@ -27,29 +30,44 @@ A beginner Python project that recommends anime based on genre and number of epi
 python main.py
 ```
 
-4. Enter an anime genre, for example:
+4. Enter an anime genre.
+5. Select:
 
-```text
-action
-```
+   * Under 50 episodes
+   * 50+ episodes
+6. Click **Recommend Anime**.
 
-5. Choose an episode filter:
-
-```text
-under
-```
-
-or:
-
-```text
-over
-```
+The application will display the anime that match your preferences.
 
 ## 📌 Version history
 
+### v0.4.1 — Graphical Interface
+
+Added:
+
+* 🖥️ Graphical interface using Tkinter.
+* 🎌 Anime Recommender window.
+* 🔤 Genre input field.
+* 🔘 Episode filter buttons.
+* 🔎 Recommendation button.
+* 📋 Results displayed directly in the application.
+* ⚠️ Validation for empty genre input.
+* ⚠️ Different messages for invalid genres and filters.
+
+### v0.4
+
+Added:
+
+* Multiple searches without restarting the program.
+* User preference validation.
+* `get_user_preferences()`.
+* `ask_to_continue()`.
+* `run_search()`.
+* Improved recommendation sorting.
+
 ### v0.3
 
-Refactored the recommendation logic into separate functions:
+Refactored the recommendation system into separate functions:
 
 * `show_anime()`
 * `matches_filters()`
@@ -67,11 +85,14 @@ Added:
 ## 🔮 Future improvements
 
 * Add more anime.
-* Allow repeated searches without restarting the program.
-* Improve the terminal interface.
-* Add a graphical interface with buttons.
+* Improve the graphical interface.
+* Add more customization options.
+* Add anime images.
 * Connect the application to an anime API.
+* Add more advanced filtering options.
 
 ## 📚 About the project
 
-This project is part of my journey learning Python and software development. Each version documents a new stage of the project and the concepts I have learned along the way.
+This project is part of my journey learning Python and software development.
+
+Each version represents a new step in the project and the programming concepts I have learned along the way.
