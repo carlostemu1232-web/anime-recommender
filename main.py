@@ -1,6 +1,56 @@
+import tkinter as tk
 title = '🎌 Anime Recommender'
 print(title)
-print()
+root = tk.Tk()
+root.title('🎌 Anime Recommender')
+root.geometry('500x500')
+label = tk.Label(root, text='🎌 Anime Recommender', font=('Arial', 24))
+label.pack(pady=20)
+genre_label = tk.Label(root, text='What anime genre do you like?', font=('Arial', 14))
+genre_label.pack()
+
+genre_entry = tk.Entry(root, font=('Arial', 14))
+genre_entry.pack(pady=5)
+episode_label = tk.Label(root, text='How many episodes?', font=('Arial', 14))
+episode_label.pack(pady=10)
+
+episode_filter = tk.StringVar(value='under')
+
+under_button = tk.Radiobutton(root, text='Under 50 episodes', variable=episode_filter, value='under', font=('Arial', 12))
+under_button.pack()
+
+over_button = tk.Radiobutton(root, text='50+ episodes', variable=episode_filter, value='over', font=('Arial', 12))
+over_button.pack()
+def recommend_anime():
+    genre = genre_entry.get().lower()
+    if not genre:
+         result_label.config(text='Please enter an anime genre.')
+         return
+    selected_filter = episode_filter.get()
+    recommendations = get_recommendations(animes, genre, selected_filter)
+    genre_found = genre_exists(animes, genre)
+
+    result = ''
+
+    for anime in recommendations:
+        result += f"🎌 {anime['name']}\n"
+        result += f"⭐ Rating: {anime['rating']}\n"
+        result += f"📅 Year: {anime['year']}\n"
+        result += f"🎬 Episodes: {anime['episodes']}\n"
+        result += '-------------------------\n'
+
+    if recommendations:
+        result_label.config(text=result)
+    elif not genre_found:
+        result_label.config(text='No anime found for this genre.')
+    else:
+        result_label.config(text='No anime matches your episode filter.')
+recommend_button = tk.Button(root, text='Recommend Anime', font=('Arial', 14), command=recommend_anime)
+recommend_button.pack(pady=15)
+result_label = tk.Label(root, text='', font=('Arial', 12))
+result_label.pack()
+
+
 def get_user_preferences():
     genre = input('What anime genre do you like? ').lower()
     episode_filter = input('Do you want under 50 or 50+ episodes? (under/over)').lower()
@@ -67,8 +117,4 @@ def genre_exists(animes, genre):
             return True
     return False
 
-while True:
-    run_search()
-
-    if not ask_to_continue():
-        break
+root.mainloop()
