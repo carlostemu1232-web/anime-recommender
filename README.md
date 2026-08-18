@@ -1,291 +1,180 @@
-# 🎌 Anime Recommender
+# 🎌 AniVerse
 
-Anime Recommender is a Python desktop application that recommends anime from a local SQLite database using genres, ratings, years and episode filters.
+AniVerse is a Python desktop anime application focused on discovering, searching and organizing anime through a modern visual interface.
 
-The project includes a local master catalog of **200 anime**, so the application does not depend on external APIs or an internet connection during execution.
+The application uses a local SQLite catalog and optionally uses AniList to enrich anime details with images, synopsis, trailers and streaming information.
 
-## 🚀 Version
-
-**Current version: v0.6.1**
-
-v0.6.1 is a stabilization and catalog-improvement release following v0.6.
-
-This version focuses on completing and validating the local catalog, improving SQLite synchronization, and keeping the recommendation system fully local and independent from external APIs.
-
-## ✨ Features
-
-* 🎌 Local anime recommendation system
-* 🎭 Search and filter by genre
-* 🎭 Select up to 3 genres
-* ⭐ Rating-based recommendation ranking
-* 📅 Year information
-* 🎬 Episode filtering
-* 📺 Under 50 episodes
-* 📺 50+ episodes
-* 💾 Local SQLite database
-* 📊 Recommendation ranking by matching genres, rating and release year
-* 🔄 Automatic catalog import and synchronization
-* 🖥️ Tkinter graphical interface
-* 📦 Local master catalog containing 200 anime
-* 🔌 No external APIs required during execution
-
-## 🧠 Recommendation System
-
-The recommendation system uses the genres selected by the user to determine the most relevant anime.
-
-Recommendations are ranked using:
-
-1. Number of matching genres
-2. Anime rating
-3. Release year
-
-Anime matching more of the selected genres receives a higher recommendation priority.
-
-### Episode Filtering
-
-Episode count is used as a **filter**, rather than as a ranking criterion.
-
-Available options:
-
-* `All episodes`
-* `Under 50 episodes`
-* `50+ episodes`
-
-Anime entries with unknown episode counts are only included when `All episodes` is selected.
-
-The application displays a maximum of **10 recommendations**.
-
-## 💾 Local Database
-
-The application uses SQLite as its local database.
-
-The database contains three main tables:
-
-* `animes`
-* `genres`
-* `anime_genres`
-
-The local master catalog is stored in:
-
-```text
-database/catalog.py
-```
-
-The SQLite database is stored in:
-
-```text
-database/anime.db
-```
-
-The master catalog is the source of truth used to synchronize the SQLite database.
-
-## 📊 Catalog Status
-
-The v0.6.1 catalog has been validated with:
-
-* **200 anime** in the master catalog
-* **200 anime** in SQLite
-* **200 unique franchises**
-* **0 NULL values** in rating
-* **0 NULL values** in year
-* **0 NULL values** in episodes
-* **0 NULL values** in status
-
-The catalog contains the following visible recommendation genres:
-
-* `action`
-* `fantasy`
-* `comedy`
-* `drama`
-* `school`
-* `adventure`
-* `romance`
-* `isekai`
-
-## 📝 Metadata
-
-Some metadata fields are intentionally left empty in the current version.
-
-The following fields are currently not populated:
-
-* `synopsis`
-* `image_url`
-* `trailer_url`
-
-No information is automatically invented for these fields.
-
-They may be completed in a future version using a reliable source or manually reviewed data.
-
-## 🔄 Catalog Import
-
-The catalog can be imported or synchronized manually with:
-
-```bash
-python database/importer.py
-```
-
-The importer uses `franchise` as the logical identifier of an anime.
-
-For each anime it:
-
-1. Inserts or updates the anime record.
-2. Removes previous genre relationships.
-3. Adds the current genres.
-4. Recreates the corresponding `anime_genres` relationships.
-
-When the application starts, it also checks whether the database is empty and automatically imports the master catalog if necessary.
-
-## ▶️ Run the Application
-
-From the project directory:
-
-```bash
-python main.py
-```
-
-Example on Windows:
-
-```bash
-python main.py
-```
-
-## 🔧 Requirements
-
-* Python 3.13+
-* Tkinter
-* SQLite3
-
-SQLite and Tkinter are included with standard Python installations on most Windows Python distributions.
-
-No external Python packages or internet connection are required to run the application.
-
-## 📁 Project Structure
-
-```text
-anime-app/
-│
-├── main.py
-│   └── Tkinter graphical interface
-│
-├── database/
-│   ├── __init__.py
-│   │
-│   ├── anime.db
-│   │   └── Local SQLite database
-│   │
-│   ├── catalog.py
-│   │   └── Master catalog of 200 anime
-│   │
-│   ├── database.py
-│   │   └── SQLite schema, queries and recommendation filtering
-│   │
-│   ├── importer.py
-│   │   └── Catalog importer and synchronization
-│   │
-│   └── test_database.py
-│       └── Database checks
-│
-├── user_data/
-│   └── Local user data
-│
-├── README.md
-│   └── Project documentation
-│
-└── PROJECT_CONTEXT.md
-    └── Development context and architecture notes
-```
-
-## 🧪 Testing
-
-The v0.6.1 version has been validated with:
-
-* Python compilation checks
-* SQLite database creation
-* Catalog import
-* Catalog/database synchronization
-* Genre filtering
-* Multiple genre selection
-* Episode filtering
-* Recommendation ranking
-* Isekai recommendations
-* Action recommendations with fewer than 50 episodes
-
-Compilation can be checked with:
-
-```bash
-python -m py_compile main.py database/database.py database/catalog.py database/importer.py database/test_database.py
-```
-
-The catalog importer can be tested with:
-
-```bash
-python database/importer.py
-```
-
-The application can be started with:
-
-```bash
-python main.py
-```
-
-## ⚠️ Current Limitations
-
-The following metadata is intentionally not available yet:
-
-* Anime synopsis
-* Anime images
-* Trailer links
-
-These fields will not be populated with invented information.
-
-The current recommendation system is also limited to the genres available in the local catalog and the filters implemented in the Tkinter interface.
-
-## 🛣️ Roadmap
-
-Possible future improvements:
-
-* 🔎 Search anime by title
-* ⭐ Rating filter
-* 📅 Year filter
-* 📺 Status filter
-* 🧠 Improved recommendation scoring
-* 🎯 Greater recommendation variety
-* 🖥️ Improved result interface
-* 🗂️ Result cards or `Treeview`
-* 📝 Reliable anime synopsis data
-* 🖼️ Anime images from a reliable source
-* 🎬 Trailer links from a reliable source
-* 🧪 Formal `pytest` test suite
-* 🧱 Further separation of the Tkinter interface into classes and components
-
-## 📜 Version History
-
-### v0.6.1
-
-* Completed and validated the local catalog metadata
-* Maintained a 200-anime master catalog
-* Validated 200 unique franchises
-* Improved SQLite catalog synchronization
-* Added and validated core metadata for the catalog
-* Maintained local genre filtering
-* Maintained multiple genre selection
-* Maintained episode filtering
-* Maintained recommendation ranking
-* Removed reliance on external APIs
-* Kept synopsis, image and trailer fields intentionally empty
-* Validated the active project modules
-
-### v0.6
-
-* Added local SQLite anime system
-* Added 200-anime master catalog
-* Added genre filtering
-* Added multiple genre selection
-* Added episode filtering
-* Improved recommendation ranking
-* Stabilized the graphical interface
+The core application can work offline.
 
 ---
 
-Made with Python 🐍, Tkinter 🎌 and SQLite 💾
+## 🚀 Version
 
+**Current version: v0.7**
+
+v0.7 is a major evolution of the previous v0.6.1 version, focused on improving the visual experience, anime discovery and personal organization.
+
+---
+
+## ✨ Features
+
+### 🎨 Modern interface
+
+- Modern dark anime-inspired design
+- Mobile-inspired layout
+- Visual anime cards
+- Large anime artwork
+- Rounded components
+- Improved spacing and hierarchy
+- Bottom navigation
+- Custom icons with transparent backgrounds
+- AniVerse branding
+
+### 🔤 Typography
+
+The interface uses:
+
+- **Outfit** for titles, headings and important UI elements
+- **DM Sans** for normal text, metadata and navigation
+
+### 🏠 Home
+
+The home page provides:
+
+- Anime recommendations
+- Top-rated anime
+- Genre-based recommendations
+- Visual anime cards
+
+### 🔥 Recommendations
+
+Recommendations use the local SQLite catalog and are ranked by:
+
+1. Matching genres
+2. Rating
+3. Release year
+
+Users can filter anime by genre and episode count.
+
+### ⭐ Top anime by genre
+
+Users can select a genre and browse the highest-rated anime within that genre.
+
+Genres are obtained directly from SQLite.
+
+### 🔎 Search
+
+A dedicated search section allows users to search the complete local anime catalog.
+
+Search supports:
+
+- Anime title
+- Original title when available
+
+Search does not require an Internet connection.
+
+### ❤️ Favorites
+
+Users can add or remove anime from favorites directly from cards or anime detail pages.
+
+Favorites are persistent and stored separately from the main anime catalog.
+
+### 📚 Custom lists
+
+Users can create personalized anime lists such as:
+
+- Watching
+- Watched
+- On Hold
+- Plan to Watch
+- Favorites
+
+Users can also create completely custom lists.
+
+List management includes:
+
+- Create
+- Rename
+- Delete
+- Add anime
+- Remove anime
+
+User data is stored separately from the main catalog.
+
+### 🎬 Anime details
+
+Anime detail pages can display:
+
+- Poster
+- Title
+- Original title
+- Rating
+- Year
+- Episodes
+- Status
+- Genres
+- Synopsis
+- Streaming information
+- Trailer
+- Favorite status
+- Lists
+
+### 🌐 AniList enrichment
+
+AniList is an optional enrichment source.
+
+It can provide:
+
+- Synopsis
+- Cover images
+- Trailers
+- Streaming information
+
+Data is cached locally to reduce repeated requests.
+
+The application continues working when AniList or the Internet is unavailable.
+
+### 🖼️ Image system
+
+v0.7 improves anime image loading.
+
+Images can be loaded directly in:
+
+- Home
+- Search
+- Favorites
+- Lists
+- Anime cards
+- Anime details
+
+Images are loaded asynchronously and cached locally when possible.
+
+If an image is unavailable, AniVerse displays a placeholder instead of an error.
+
+---
+
+## 📴 Offline-first design
+
+The core recommendation and search system uses the local SQLite database.
+
+The application does not require Internet access for:
+
+- Search
+- Recommendations
+- Genre filtering
+- Episode filtering
+- Ratings
+- Years
+- Favorites
+- Custom lists
+
+AniList is only used as optional enrichment.
+
+---
+
+## 🗃️ Database
+
+Main database:
+
+```text
+database/anime.db
