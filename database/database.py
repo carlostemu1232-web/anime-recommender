@@ -671,6 +671,50 @@ def get_all_animes_with_genres():
 
 
 # =========================
+# GET ANIME WITH GENRES
+# =========================
+
+def get_anime_with_genres(
+    anime_id
+):
+
+    animes = get_all_animes_with_genres()
+
+    for anime in animes:
+
+        if anime['id'] == anime_id:
+
+            return anime
+
+    return None
+
+
+# =========================
+# SEARCH ANIMES
+# =========================
+
+def search_animes(
+    query
+):
+
+    query = query.strip()
+
+    if not query:
+
+        return []
+
+    animes = get_all_animes_with_genres()
+    query = query.casefold()
+
+    return [
+        anime
+        for anime in animes
+        if query in anime.get('title', '').casefold()
+        or query in (anime.get('original_title') or '').casefold()
+    ]
+
+
+# =========================
 # FILTER ANIMES
 # =========================
 
