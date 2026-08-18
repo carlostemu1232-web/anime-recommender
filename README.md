@@ -1,8 +1,8 @@
 # 🎌 Anime Recommender
 
-Anime Recommender is a Python desktop application that recommends anime based on genres, episode count and search type.
+Anime Recommender is a Python desktop application that recommends anime from a local SQLite database using genres, ratings, years and episode counts.
 
-The project uses multiple anime APIs and combines their results to provide recommendations.
+The project includes a local catalog of 200 anime, so it does not depend on external APIs or an internet connection.
 
 ## 🚀 Version
 
@@ -20,28 +20,10 @@ The v0.6 release is considered a stable version of the project before starting d
 * 🎬 Episode filtering
 * 📺 Under 50 episodes
 * 📺 50+ episodes
-* 🔥 Trending anime
-* 🆕 Recent anime
-* 🏆 Top anime
-* 🔄 Results from multiple APIs
-* 🧩 Automatic API fallback
-* 📊 Unified results from different sources
-* 🛡️ Application continues working when one or more APIs fail
+* 💾 Local SQLite catalog
+* 📊 Ranking by matching genres, rating and release year
+* 🔄 Catalog import and update from the local master catalog
 * 🖥️ Simple Tkinter graphical interface
-
-## 🌐 APIs
-
-The project currently uses:
-
-* Jikan
-* Kitsu
-* AniList
-
-AniList is currently the main source for obtaining a larger number of results, while Jikan and Kitsu are used as additional sources when available.
-
-The application does not require all APIs to work simultaneously.
-
-If an API fails, the application continues using the available sources.
 
 ## 🧠 Recommendation System
 
@@ -58,14 +40,7 @@ Anime matching more selected genres receives a higher recommendation priority.
 ## 🔧 Requirements
 
 * Python 3.13+
-* `requests`
 * Tkinter
-
-Install the Python dependency with:
-
-```bash
-pip install requests
-```
 
 Tkinter is included with standard Python installations on Windows.
 
@@ -91,14 +66,15 @@ anime-app/
 ├── main.py
 │   └── Graphical user interface
 │
-├── api_sources.py
-│   └── API connections and anime data processing
-│
-├── api_practice.py
-│   └── Recommendation and filtering logic
-│
-├── requirements.txt
-│   └── Python dependencies
+├── database/
+│   ├── database.py
+│   │   └── SQLite schema, queries and filtering logic
+│   ├── catalog.py
+│   │   └── Local catalog of 200 anime
+│   ├── importer.py
+│   │   └── Catalog importer
+│   └── test_database.py
+│       └── Database checks
 │
 ├── README.md
 │   └── Project documentation
@@ -124,38 +100,16 @@ The v0.6 version has been tested with:
 * Multiple genres
 * Under 50 episodes
 * 50+ episodes
-* Trending
-* Recent
-* Top
 
-The application was also tested with API failures to verify that it can continue operating with fewer available sources.
+The application was tested with the local SQLite catalog and its genre and episode filters.
 
 ## ⚠️ Current Limitations
 
-Some APIs can occasionally return errors or take longer to respond.
+Some catalog entries still need complete episode and rating metadata.
 
-Genre-specific results can also have limited variety depending on the API and the current data available.
-
-In particular, highly specific genres such as Isekai may return fewer results than broader genres such as Action or Romance.
-
-These limitations are planned for future versions.
+These fields can be completed directly in the local catalog.
 
 ## 🛣️ Roadmap
-
-### v0.6.1v — Genre Sources
-
-The next version will investigate specialized sources for important genres.
-
-Planned areas include:
-
-* 🌀 Isekai
-* 💕 Romance
-* 🧙 Fantasy
-* ⚔️ Action
-* 🧠 Psychological
-* 👻 Horror
-
-The goal is to increase variety for specific genres while keeping the existing APIs as general sources.
 
 ### Future versions
 
@@ -165,24 +119,18 @@ Possible future improvements:
 * Better duplicate detection
 * Improved recommendation scoring
 * More recommendation variety
-* Better handling of API failures
-* More specialized genre sources
+* Complete missing episode and rating metadata
 * Improved user interface
 
 ## 📜 Version History
 
 ### v0.6
 
-* Added multi-API anime system
-* Added Jikan, Kitsu and AniList integration
-* Added API fallback system
+* Added local SQLite anime system
+* Added 200-anime master catalog
 * Added genre filtering
 * Added multiple genre selection
 * Added episode filtering
-* Added Trending / Recent / Top modes
-* Added unified anime results
-* Added larger AniList result sets
-* Improved API error handling
 * Improved recommendation ranking
 * Stabilized the graphical interface
 

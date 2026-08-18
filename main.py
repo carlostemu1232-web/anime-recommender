@@ -1,8 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from api_sources import load_all_animes
-from api_practice import get_recommendations
+from database.database import (
+    create_database,
+    get_all_animes,
+    get_all_animes_with_genres,
+    get_recommendations
+)
+from database.importer import import_catalog
 
 
 # =========================
@@ -17,35 +22,25 @@ WINDOW_HEIGHT = 750
 GENRES = [
     '',
     'action',
-    'adventure',
+    'fantasy',
     'comedy',
     'drama',
-    'fantasy',
-    'horror',
-    'mystery',
-    'romance',
-    'sci-fi',
-    'sports',
-    'supernatural',
-    'thriller',
-    'psychological',
-    'historical',
-    'military',
     'school',
-    'music',
-    'mecha',
-    'martial arts',
-    'magic',
-    'space',
-    'samurai',
-    'parody',
-    'slice of life',
+    'adventure',
+    'romance',
     'isekai',
-    'seinen',
-    'shounen',
-    'shoujo',
-    'josei'
 ]
+
+
+# =========================
+# DATABASE
+# =========================
+
+create_database()
+
+if not get_all_animes():
+
+    import_catalog()
 
 
 # =========================
@@ -59,10 +54,12 @@ root.title(TITLE)
 root.geometry(
     f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}'
 )
+
 root.resizable(
     False,
     False
 )
+
 root.minsize(
     600,
     650
@@ -207,7 +204,7 @@ episode_label.pack(
 
 
 episode_filter = tk.StringVar(
-    value='under'
+    value='all'
 )
 
 
@@ -216,6 +213,21 @@ episode_frame = tk.Frame(
 )
 
 episode_frame.pack()
+
+
+all_episodes_button = tk.Radiobutton(
+    episode_frame,
+    text='All episodes',
+    variable=episode_filter,
+    value='all',
+    font=('Arial', 12)
+)
+
+all_episodes_button.grid(
+    row=0,
+    column=0,
+    padx=10
+)
 
 
 under_button = tk.Radiobutton(
@@ -228,7 +240,7 @@ under_button = tk.Radiobutton(
 
 under_button.grid(
     row=0,
-    column=0,
+    column=1,
     padx=10
 )
 
@@ -243,45 +255,9 @@ over_button = tk.Radiobutton(
 
 over_button.grid(
     row=0,
-    column=1,
+    column=2,
     padx=10
 )
-
-
-# =========================
-# SEARCH TYPE
-# =========================
-
-search_type_label = tk.Label(
-    main_frame,
-    text='What type of anime?',
-    font=('Arial', 14)
-)
-
-search_type_label.pack(
-    pady=(10, 5)
-)
-
-
-search_type = tk.StringVar(
-    value='trending'
-)
-
-
-search_type_menu = tk.OptionMenu(
-    main_frame,
-    search_type,
-    'trending',
-    'recent',
-    'top'
-)
-
-search_type_menu.config(
-    font=('Arial', 12),
-    width=15
-)
-
-search_type_menu.pack()
 
 
 # =========================
@@ -317,9 +293,9 @@ def recommend_anime():
         if genre
     ]
 
-    # -------------------------
+    # =========================
     # CHECK GENRES
-    # -------------------------
+    # =========================
 
     if not selected_genres:
 
@@ -330,21 +306,17 @@ def recommend_anime():
 
         return
 
-    # -------------------------
+    # =========================
     # GET FILTERS
-    # -------------------------
+    # =========================
 
     selected_filter = (
         episode_filter.get()
     )
 
-    selected_type = (
-        search_type.get()
-    )
-
-    # -------------------------
+    # =========================
     # CLEAR RESULTS
-    # -------------------------
+    # =========================
 
     result_text.delete(
         '1.0',
@@ -357,40 +329,13 @@ def recommend_anime():
 
     root.update_idletasks()
 
-    # -------------------------
-    # LOAD ANIMES
-    # -------------------------
+    # =========================
+    # LOAD LOCAL ANIMES
+    # =========================
 
     try:
 
-        animes = load_all_animes(
-            selected_type,
-            selected_genres
-        )
-
-    except TypeError:
-
-        # Compatibility with
-        # older api_sources.py
-
-        try:
-
-            animes = load_all_animes(
-                selected_type
-            )
-
-        except Exception as error:
-
-            status_label.config(
-                text='Error loading anime.'
-            )
-
-            result_text.insert(
-                tk.END,
-                f'Error:\n{error}'
-            )
-
-            return
+        animes = get_all_animes_with_genres()
 
     except Exception as error:
 
@@ -405,9 +350,9 @@ def recommend_anime():
 
         return
 
-    # -------------------------
+    # =========================
     # NO DATA
-    # -------------------------
+    # =========================
 
     if not animes:
 
@@ -418,14 +363,14 @@ def recommend_anime():
         result_text.insert(
             tk.END,
             'No anime data was found.\n\n'
-            'Try another genre or search type.'
+            'Try another genre or episode filter.'
         )
 
         return
 
-    # -------------------------
+    # =========================
     # RECOMMENDATIONS
-    # -------------------------
+    # =========================
 
     recommendations = get_recommendations(
         animes,
@@ -433,12 +378,11 @@ def recommend_anime():
         selected_filter
     )
 
-    # Maximum results
     recommendations = recommendations[:10]
 
-    # -------------------------
+    # =========================
     # SHOW RESULTS
-    # -------------------------
+    # =========================
 
     if not recommendations:
 
@@ -451,8 +395,7 @@ def recommend_anime():
             'No anime found matching your filters.\n\n'
             'Try:\n'
             '- Another genre\n'
-            '- Another episode filter\n'
-            '- Another search type'
+            '- Another episode filter'
         )
 
         return
@@ -470,7 +413,7 @@ def recommend_anime():
     ):
 
         name = anime.get(
-            'name',
+            'title',
             'Unknown'
         )
 
@@ -486,19 +429,10 @@ def recommend_anime():
             'episodes'
         )
 
-        sources = anime.get(
-            'sources',
-            1
-        )
-
         genre_matches = anime.get(
             'genre_matches',
             0
         )
-
-        # -------------------------
-        # RESULT
-        # -------------------------
 
         result_text.insert(
             tk.END,
@@ -549,7 +483,7 @@ def recommend_anime():
 
         result_text.insert(
             tk.END,
-            f'   🌐 Sources: {sources}\n'
+            '   💾 Source: Local database\n'
         )
 
         result_text.insert(
