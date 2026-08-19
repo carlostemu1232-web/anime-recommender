@@ -12,17 +12,21 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    container:
-      image: kivy/buildozer:latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify Docker availability
+        run: docker --version
+
       - name: Build debug APK
-        working-directory: mobile_kivy
         run: |
-          buildozer android debug
+          docker run --rm \
+            -v "${{ github.workspace }}/mobile_kivy:/home/user/hostcwd" \
+            -w /home/user/hostcwd \
+            kivy/buildozer:latest \
+            buildozer android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
