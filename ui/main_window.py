@@ -2,7 +2,15 @@ import html
 import os
 import random
 
-from PySide6.QtCore import QObject, QTimer, QSize, Qt, Signal
+from PySide6.QtCore import (
+    QEasingCurve,
+    QObject,
+    QPropertyAnimation,
+    QTimer,
+    QSize,
+    Qt,
+    Signal
+)
 from PySide6.QtGui import QDesktopServices, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QComboBox,
@@ -13,6 +21,7 @@ from PySide6.QtWidgets import (
     QFrame,
     QGraphicsBlurEffect,
     QGridLayout,
+    QGraphicsOpacityEffect,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -101,6 +110,44 @@ def make_icon(name):
     return QIcon()
 
 
+class AnimatedButton(QPushButton):
+
+    def __init__(self, text='', parent=None):
+
+        super().__init__(text, parent)
+        self.opacity_effect = QGraphicsOpacityEffect(self)
+        self.opacity_effect.setOpacity(0.9)
+        self.setGraphicsEffect(self.opacity_effect)
+        self.opacity_animation = QPropertyAnimation(
+            self.opacity_effect,
+            b'opacity',
+            self
+        )
+        self.opacity_animation.setDuration(140)
+        self.opacity_animation.setEasingCurve(
+            QEasingCurve.Type.OutCubic
+        )
+
+    def animate_opacity(self, value):
+
+        self.opacity_animation.stop()
+        self.opacity_animation.setStartValue(
+            self.opacity_effect.opacity()
+        )
+        self.opacity_animation.setEndValue(value)
+        self.opacity_animation.start()
+
+    def enterEvent(self, event):
+
+        self.animate_opacity(1.0)
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+
+        self.animate_opacity(0.9)
+        super().leaveEvent(event)
+
+
 PLACEHOLDER_PATH = os.path.join(
     ASSET_FOLDER,
     'images',
@@ -129,7 +176,11 @@ class AnimeCard(QFrame):
         self.poster = None
         self.setObjectName('AnimeCard')
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setFixedSize(184, 350)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Fixed,
+            QSizePolicy.Policy.Fixed
+        )
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(6, 8, 6, 8)
@@ -166,6 +217,7 @@ class AnimeCard(QFrame):
         actions = QHBoxLayout()
         actions.addStretch()
         favorite = QPushButton()
+        self.favorite_button = favorite
         favorite.setIcon(
             make_icon(
                 'heart_filled' if is_favorite(anime['id']) else 'heart'
@@ -174,6 +226,7 @@ class AnimeCard(QFrame):
         favorite.setObjectName('FavoriteButton')
         favorite.setToolTip('Add or remove from favorites')
         favorite.setFixedSize(38, 32)
+        favorite.setCursor(Qt.CursorShape.PointingHandCursor)
         favorite.clicked.connect(self.change_favorite)
         actions.addWidget(favorite)
         actions.addStretch()
@@ -189,7 +242,16 @@ class AnimeCard(QFrame):
 
     def change_favorite(self):
 
-        toggle_favorite(self.anime['id'])
+        saved = toggle_favorite(self.anime['id'])
+        self.favorite_button.setIcon(
+            make_icon(
+                'heart_filled' if saved else 'heart'
+            )
+        )
+        self.favorite_button.setToolTip(
+            'Remove from favorites' if saved
+            else 'Add to favorites'
+        )
         self.favorite_changed.emit(self.anime['id'])
 
     def set_poster(self, path, loading=False):
@@ -316,10 +378,13 @@ class AnimeWindow(QMainWindow):
         self.online_attempts = set()
         self.visible_cards = {}
         self.home_section_expanded = {}
+        self.random_history = set()
+        self.is_mobile = False
+        self._responsive_mode = False
         self.current_anime_id = None
         self.search_timer = QTimer(self)
         self.search_timer.setSingleShot(True)
-        self.search_timer.setInterval(220)
+        self.search_timer.setInterval(350)
         self.search_timer.timeout.connect(self.render_search_results)
         self.media_bridge = MediaBridge()
         self.media_bridge.ready.connect(self.apply_online_media)
@@ -344,9 +409,14 @@ class AnimeWindow(QMainWindow):
         central = QWidget()
         central.setObjectName('Shell')
         self.setCentralWidget(central)
-        shell = QHBoxLayout(central)
+        shell = QVBoxLayout(central)
         shell.setContentsMargins(0, 0, 0, 0)
         shell.setSpacing(0)
+
+        body = QWidget()
+        body_layout = QHBoxLayout(body)
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.setSpacing(0)
 
         sidebar = QFrame()
         sidebar.setObjectName('Sidebar')
@@ -372,7 +442,7 @@ class AnimeWindow(QMainWindow):
 
         for icon_name, label, handler in nav_items:
 
-            button = QPushButton(label)
+            button = AnimatedButton(label)
             button.setObjectName('SideNavButton')
             button.setIcon(make_icon(icon_name))
             button.setIconSize(QSize(20, 20))
@@ -381,19 +451,14 @@ class AnimeWindow(QMainWindow):
             sidebar_layout.addWidget(button)
 
         sidebar_layout.addStretch()
-        shell.addWidget(sidebar)
+        body_layout.addWidget(sidebar)
 
         content_shell = QVBoxLayout()
         content_shell.setContentsMargins(22, 14, 22, 14)
         content_shell.setSpacing(12)
 
         header = QHBoxLayout()
-        self.top_search = QLineEdit()
-        self.top_search.setObjectName('TopSearch')
-        self.top_search.setPlaceholderText('Search anime...')
-        self.top_search.setClearButtonEnabled(True)
-        self.top_search.textChanged.connect(self.search_from_header)
-        header.addWidget(self.top_search, 1)
+        header.addStretch()
         self.connection_label = QLabel('● Local catalog')
         self.connection_label.setObjectName('Muted')
         header.addWidget(self.connection_label)
@@ -427,17 +492,53 @@ class AnimeWindow(QMainWindow):
 
             self.pages.addWidget(page)
 
-        shell.addLayout(content_shell, 1)
+        body_layout.addLayout(content_shell, 1)
+        shell.addWidget(body, 1)
 
-    def search_from_header(self, text):
+        self.sidebar = sidebar
+        self.mobile_nav = self.build_mobile_navigation()
+        shell.addWidget(self.mobile_nav)
+        self.mobile_nav.setVisible(False)
 
-        if text and self.pages.currentWidget() is not self.search_page:
+    def build_mobile_navigation(self):
 
-            self.show_search()
+        navigation = QFrame()
+        navigation.setObjectName('MobileNav')
+        layout = QHBoxLayout(navigation)
+        layout.setContentsMargins(6, 5, 6, 5)
+        layout.setSpacing(3)
 
-        if hasattr(self, 'search_input') and self.search_input.text() != text:
+        for icon_name, label, handler in (
+            ('home', 'Home', self.show_home),
+            ('search', 'Explore', self.show_search),
+            ('wand', 'Random', self.show_random),
+            ('favorites', 'Favorites', self.show_favorites),
+            ('lists', 'Lists', self.show_lists)
+        ):
 
-            self.search_input.setText(text)
+            button = AnimatedButton(label)
+            button.setObjectName('MobileNavButton')
+            button.setIcon(make_icon(icon_name))
+            button.setIconSize(QSize(21, 21))
+            button.setToolTip(label)
+            button.clicked.connect(handler)
+            layout.addWidget(button, 1)
+
+        return navigation
+
+    def resizeEvent(self, event):
+
+        mobile = self.width() < 700
+
+        if mobile != self._responsive_mode:
+
+            self.is_mobile = mobile
+            self._responsive_mode = mobile
+            self.sidebar.setVisible(not mobile)
+            self.mobile_nav.setVisible(mobile)
+            self.render_home_sections()
+
+        super().resizeEvent(event)
 
     def build_home_page(self):
 
@@ -538,23 +639,58 @@ class AnimeWindow(QMainWindow):
         header.addWidget(more_button)
         section_layout.addLayout(header)
 
-        cards_grid = QGridLayout()
-        cards_grid.setContentsMargins(2, 2, 2, 2)
-        cards_grid.setHorizontalSpacing(12)
-        cards_grid.setVerticalSpacing(12)
-        section_layout.addLayout(cards_grid)
-
         section.setProperty('homeTitle', title)
         section.setProperty('homeAnimeCount', len(animes))
-        section._cards_grid = cards_grid
         section._more_button = more_button
 
-        self.populate_home_grid(
-            cards_grid,
-            animes[:5]
-        )
+        if self.is_mobile:
+
+            row_scroll = QScrollArea()
+            row_scroll.setWidgetResizable(True)
+            row_scroll.setFrameShape(QFrame.Shape.NoFrame)
+            row_scroll.setHorizontalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAsNeeded
+            )
+            row_scroll.setVerticalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            )
+            row_content = QWidget()
+            row_layout = QHBoxLayout(row_content)
+            row_layout.setContentsMargins(2, 2, 2, 6)
+            row_layout.setSpacing(10)
+            row_scroll.setWidget(row_content)
+            section_layout.addWidget(row_scroll)
+            section._cards_grid = None
+            section._cards_layout = row_layout
+            section._row_scroll = row_scroll
+            self.populate_home_row(row_layout, animes[:3])
+
+        else:
+
+            cards_grid = QGridLayout()
+            cards_grid.setContentsMargins(2, 2, 2, 2)
+            cards_grid.setHorizontalSpacing(12)
+            cards_grid.setVerticalSpacing(12)
+            section_layout.addLayout(cards_grid)
+            section._cards_grid = cards_grid
+            section._cards_layout = None
+            self.populate_home_grid(cards_grid, animes[:5])
+
         self.home_content_layout.addWidget(section)
-        self.prefetch_media(animes[:5])
+        self.prefetch_media(animes[:3] if self.is_mobile else animes[:5])
+
+    def populate_home_row(self, layout, animes):
+
+        for anime in animes:
+
+            card = AnimeCard(anime, self.image_lookup)
+            card.setFixedWidth(184)
+            self.visible_cards.setdefault(anime['id'], []).append(card)
+            card.opened.connect(self.show_detail)
+            card.favorite_changed.connect(self.refresh_visible_cards)
+            layout.addWidget(card)
+
+        layout.addStretch()
 
     def populate_home_grid(self, grid, animes):
 
@@ -568,13 +704,32 @@ class AnimeWindow(QMainWindow):
             ).append(card)
             card.opened.connect(self.show_detail)
             card.favorite_changed.connect(self.refresh_visible_cards)
-            grid.addWidget(card, 0, index)
+            grid.addWidget(
+                card,
+                0,
+                index,
+                Qt.AlignmentFlag.AlignTop
+            )
 
     def expand_home_section(self, title, animes, section):
 
         expanded = self.home_section_expanded.get(title, False)
         self.home_section_expanded[title] = not expanded
         grid = section._cards_grid
+
+        if self.is_mobile and section._cards_layout is not None:
+
+            self.clear_layout(section._cards_layout)
+            visible_animes = animes if not expanded else animes[:3]
+            section._more_button.setText(
+                'Show less' if not expanded else 'See more'
+            )
+            self.populate_home_row(
+                section._cards_layout,
+                visible_animes
+            )
+            self.prefetch_media(visible_animes)
+            return
 
         while grid.count():
 
@@ -599,7 +754,12 @@ class AnimeWindow(QMainWindow):
             ).append(card)
             card.opened.connect(self.show_detail)
             card.favorite_changed.connect(self.refresh_visible_cards)
-            grid.addWidget(card, index // 5, index % 5)
+            grid.addWidget(
+                card,
+                index // 5,
+                index % 5,
+                Qt.AlignmentFlag.AlignTop
+            )
 
         self.prefetch_media(visible_animes)
 
@@ -615,10 +775,17 @@ class AnimeWindow(QMainWindow):
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText('Search by title or original title...')
         self.search_input.setVisible(True)
-        self.search_input.textChanged.connect(
-            lambda: self.search_timer.start()
-        )
-        layout.addWidget(self.search_input)
+
+        search_row = QHBoxLayout()
+        search_row.addWidget(self.search_input, 1)
+        search_button = QPushButton()
+        search_button.setIcon(make_icon('search'))
+        search_button.setIconSize(QSize(22, 22))
+        search_button.setFixedSize(46, 42)
+        search_button.setToolTip('Search')
+        search_button.clicked.connect(self.render_search_results)
+        search_row.addWidget(search_button)
+        layout.addLayout(search_row)
 
         self.search_scroll = self.create_scroll()
         layout.addWidget(self.search_scroll, 1)
@@ -662,7 +829,7 @@ class AnimeWindow(QMainWindow):
 
         for index, genre in enumerate(GENRES[1:]):
 
-            button = QPushButton(genre.title())
+            button = AnimatedButton(genre.title())
             button.setCheckable(True)
             button.setObjectName('GenreChoice')
             self.random_group.addButton(button)
@@ -672,28 +839,28 @@ class AnimeWindow(QMainWindow):
         self.random_genre_buttons[0].setChecked(True)
         layout.addWidget(genre_panel)
 
-        popularity_label = QLabel('Popularity')
-        popularity_label.setObjectName('SectionTitle')
-        layout.addWidget(popularity_label)
+        episodes_label = QLabel('Episode filter')
+        episodes_label.setObjectName('SectionTitle')
+        layout.addWidget(episodes_label)
         popularity_panel = QFrame()
         popularity_panel.setObjectName('RandomPanel')
         popularity_layout = QGridLayout(popularity_panel)
         popularity_layout.setContentsMargins(12, 12, 12, 12)
         popularity_layout.setHorizontalSpacing(10)
-        self.popularity_group = QButtonGroup(self)
-        self.popularity_group.setExclusive(True)
+        self.random_episode_group = QButtonGroup(self)
+        self.random_episode_group.setExclusive(True)
 
-        for index, label in enumerate((
-            'Any popularity',
-            'Very popular',
-            'Popular',
-            'Hidden gems'
+        for index, option in enumerate((
+            ('All episodes', 'all'),
+            ('Under 24 episodes', 'under_24'),
+            ('24+ episodes', 'over_24')
         )):
 
-            button = QPushButton(label)
+            button = AnimatedButton(option[0])
             button.setCheckable(True)
             button.setObjectName('GenreChoice')
-            self.popularity_group.addButton(button)
+            button.setProperty('episodeFilter', option[1])
+            self.random_episode_group.addButton(button)
             popularity_layout.addWidget(button, 0, index)
 
             if index == 0:
@@ -702,7 +869,7 @@ class AnimeWindow(QMainWindow):
 
         layout.addWidget(popularity_panel)
 
-        search_button = QPushButton('Search randomly')
+        search_button = AnimatedButton('Search randomly')
         search_button.setObjectName('PrimaryButton')
         search_button.setIcon(make_icon('wand'))
         search_button.clicked.connect(self.random_discovery)
@@ -739,47 +906,57 @@ class AnimeWindow(QMainWindow):
             if selected in anime.get('genres', [])
             and anime not in primary_pool
         ]
-        popularity_button = self.popularity_group.checkedButton()
-        popularity = (
-            popularity_button.text()
-            if popularity_button
-            else 'Any popularity'
+        episode_button = self.random_episode_group.checkedButton()
+        episode_filter = (
+            episode_button.property('episodeFilter')
+            if episode_button
+            else 'all'
         )
 
         pool = primary_pool + secondary_pool
 
-        if popularity != 'Any popularity':
+        if episode_filter == 'under_24':
 
             pool = [
                 anime
                 for anime in pool
-                if self.popularity_category(anime) == popularity
+                if anime.get('episodes_complete')
+                and anime.get('known_episodes') is not None
+                and anime['known_episodes'] < 24
+            ]
+
+        elif episode_filter == 'over_24':
+
+            pool = [
+                anime
+                for anime in pool
+                if anime.get('episodes_complete')
+                and anime.get('known_episodes') is not None
+                and anime['known_episodes'] >= 24
             ]
 
         random.shuffle(pool)
-        selected_results = pool[:5]
+        unseen = [
+            anime
+            for anime in pool
+            if anime['franchise_key'] not in self.random_history
+        ]
+
+        if not unseen:
+
+            self.random_history.clear()
+            unseen = pool
+
+        selected_results = unseen[:5]
+        self.random_history.update(
+            anime['franchise_key']
+            for anime in selected_results
+        )
         self.render_grid(
             self.random_grid,
             selected_results
         )
         self.prefetch_media(selected_results)
-
-    @staticmethod
-    def popularity_category(anime):
-
-        rating = anime.get('average_rating') or anime.get('rating') or 0
-        parts = anime.get('part_count', 1)
-        episodes = anime.get('known_episodes', 0)
-
-        if rating >= 8.5 or parts >= 3 or episodes >= 100:
-
-            return 'Very popular'
-
-        if rating >= 7.5 or parts >= 2:
-
-            return 'Popular'
-
-        return 'Hidden gems'
 
     def build_settings_page(self):
 
@@ -852,7 +1029,7 @@ class AnimeWindow(QMainWindow):
             layout.addWidget(QLabel('No results yet.'), 0, 0)
             return
 
-        columns = 4
+        columns = 2 if self.is_mobile else 4
 
         for index, anime in enumerate(animes):
 
@@ -877,13 +1054,37 @@ class AnimeWindow(QMainWindow):
                 )
                 card.layout().addWidget(remove_button)
 
-            layout.addWidget(card, index // columns, index % columns)
+            layout.addWidget(
+                card,
+                index // columns,
+                index % columns,
+                Qt.AlignmentFlag.AlignTop
+            )
 
     def render_search_results(self):
 
-        results = build_franchise_groups(
-            search_animes(self.search_input.text())
-        )
+        query = self.search_input.text().strip().casefold()
+
+        if len(query) < 2:
+
+            self.clear_layout(self.search_grid)
+            self.search_grid.addWidget(
+                QLabel('Type at least two characters to search.'),
+                0,
+                0
+            )
+            return
+
+        results = [
+            anime
+            for anime in self.animes
+            if query in anime.get('title', '').casefold()
+            or query in (anime.get('original_title') or '').casefold()
+            or any(
+                query in part.get('title', '').casefold()
+                for part in anime.get('parts', [])
+            )
+        ]
         visible_results = results[:60]
         self.render_grid(self.search_grid, visible_results)
         self.prefetch_media(visible_results[:12])
@@ -1153,7 +1354,7 @@ class AnimeWindow(QMainWindow):
             anime.get('original_title')
         )
 
-    def render_detail(self, anime, online):
+    def render_detail_legacy_reference(self, anime, online):
 
         """
 
@@ -1505,7 +1706,11 @@ class AnimeWindow(QMainWindow):
         stack.addWidget(overlay)
         backdrop.lower()
         overlay.raise_()
-        hero_layout = QHBoxLayout(overlay)
+        hero_layout = (
+            QVBoxLayout(overlay)
+            if self.is_mobile
+            else QHBoxLayout(overlay)
+        )
         hero_layout.setContentsMargins(20, 18, 20, 18)
         hero_layout.setSpacing(18)
 
@@ -1532,6 +1737,13 @@ class AnimeWindow(QMainWindow):
         if poster.pixmap() is None or poster.pixmap().isNull():
 
             poster.setText('No image available')
+
+        if self.is_mobile:
+
+            hero_layout.setAlignment(
+                poster,
+                Qt.AlignmentFlag.AlignHCenter
+            )
 
         hero_layout.addWidget(poster)
 
@@ -1584,7 +1796,11 @@ class AnimeWindow(QMainWindow):
         hero_layout.addLayout(info, 1)
         page_layout.addWidget(hero)
 
-        lower = QHBoxLayout()
+        lower = (
+            QVBoxLayout()
+            if self.is_mobile
+            else QHBoxLayout()
+        )
         stats = QFrame()
         stats.setObjectName('DetailStats')
         stats_layout = QVBoxLayout(stats)
@@ -1618,6 +1834,8 @@ class AnimeWindow(QMainWindow):
         parts_grid.setHorizontalSpacing(10)
         parts_grid.setVerticalSpacing(12)
 
+        part_columns = 2 if self.is_mobile else 6
+
         for index, part in enumerate(anime.get('parts', [])):
 
             part_card = PartCard(part, self.image_lookup)
@@ -1627,7 +1845,11 @@ class AnimeWindow(QMainWindow):
                     self.detail_return_page
                 )
             )
-            parts_grid.addWidget(part_card, index // 6, index % 6)
+            parts_grid.addWidget(
+                part_card,
+                index // part_columns,
+                index % part_columns
+            )
             self.image_manager.request(part)
 
         page_layout.addWidget(parts_panel)

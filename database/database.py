@@ -749,15 +749,15 @@ def get_recommendations(
             'episodes'
         )
 
-        if episode_filter == 'under':
+        if episode_filter == 'under_24':
 
-            if episodes is None or episodes >= 50:
+            if episodes is None or episodes >= 24:
 
                 continue
 
-        elif episode_filter == 'over':
+        elif episode_filter == 'over_24':
 
-            if episodes is None or episodes < 50:
+            if episodes is None or episodes < 24:
 
                 continue
 

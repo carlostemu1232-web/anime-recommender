@@ -17312,5 +17312,887 @@
     ],
     "source_url": "https://anilist.co/anime/20698",
     "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\my_teen_romantic_comedy_snafu_too.jpg"
+  },
+  "the_case_study_of_vanitas_part_2": {
+    "anilist_id": 131646,
+    "synopsis": "It’s 19th-century Paris, and young vampire Noé hunts for the Book of Vanitas. Attacked by a vampire driven insane, a human intercedes, rescues Noé, and heals the sick creature. Commanding the book and calling himself Vanitas, this doctor tempts Noé with a mad crusade to “cure” the entire vampire race. Allying with one who wields arcane power so easily may be dangerous, but does he have a choice?<br> <br> (Source: Funimation)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx131646-cuyGfKcekZ62.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=S7mL2DI_X9s",
+    "watch_links": [
+      {
+        "site": "Episode 1 - In the Event of Rusty Hopes",
+        "url": "http://www.crunchyroll.com/watch/GEVUZEMZW/in-the-event-of-rusty-hopes"
+      },
+      {
+        "site": "Episode 2 - In the City of Flowers",
+        "url": "http://www.crunchyroll.com/watch/G7PU49E48/in-the-city-of-flowers"
+      },
+      {
+        "site": "Episode 3 - Fangs That Lay Bare Blood",
+        "url": "http://www.crunchyroll.com/watch/GQJUG2K03/fangs-that-lay-bare-blood"
+      },
+      {
+        "site": "Episode 4 - Night of Mocking Masks",
+        "url": "http://www.crunchyroll.com/watch/GQJUG2270/night-of-mocking-masks"
+      },
+      {
+        "site": "Episode 5 - Friends",
+        "url": "http://www.crunchyroll.com/watch/GN7UD4V3M/friends"
+      },
+      {
+        "site": "Episode 6 - Questions",
+        "url": "http://www.crunchyroll.com/watch/GD9UVXQ21/questions"
+      },
+      {
+        "site": "Episode 7 - Love",
+        "url": "http://www.crunchyroll.com/watch/G0DUN8K8P/love"
+      },
+      {
+        "site": "Episode 8 - Where Death Slumbers",
+        "url": "http://www.crunchyroll.com/watch/GQJUGQNM0/where-death-slumbers"
+      },
+      {
+        "site": "Episode 9 - Those Who Hunt Crimson",
+        "url": "http://www.crunchyroll.com/watch/G2XU0D18X/those-who-hunt-crimson"
+      },
+      {
+        "site": "Episode 10 - Number 69",
+        "url": "http://www.crunchyroll.com/watch/G2XU0D0NE/number-69"
+      },
+      {
+        "site": "Episode 11 - Promises",
+        "url": "http://www.crunchyroll.com/watch/G9DUEG9X9/promises"
+      },
+      {
+        "site": "Episode 12 - Point of Departure",
+        "url": "http://www.crunchyroll.com/watch/G7PU4J8MN/point-of-departure"
+      },
+      {
+        "site": "Episode 13 - A Chance Encounter",
+        "url": "http://www.crunchyroll.com/watch/G8WUN09KJ/a-chance-encounter"
+      },
+      {
+        "site": "Episode 14 - The Witch and the Young Man",
+        "url": "http://www.crunchyroll.com/watch/G50UZ12WP/the-witch-and-the-young-man"
+      },
+      {
+        "site": "Episode 15 - The d'Apchiers' Vampire",
+        "url": "http://www.crunchyroll.com/watch/GG1U2ZEKV/the-dapchiers-vampire"
+      },
+      {
+        "site": "Episode 16 - The Beast",
+        "url": "http://www.crunchyroll.com/watch/GWDU8QG09/the-beast"
+      },
+      {
+        "site": "Episode 17 - Hands upon a Nightmare",
+        "url": "http://www.crunchyroll.com/watch/GZ7UV18WV/hands-upon-a-nightmare"
+      },
+      {
+        "site": "Episode 18 - Just the Two of Us",
+        "url": "http://www.crunchyroll.com/watch/G2XU0DE27/just-the-two-of-us"
+      },
+      {
+        "site": "Episode 19 - Snow Flower",
+        "url": "http://www.crunchyroll.com/watch/GG1U2ZZGG/snow-flower"
+      },
+      {
+        "site": "Episode 20 - The Incurable Disease",
+        "url": "http://www.crunchyroll.com/watch/GD9UV8321/the-incurable-disease"
+      },
+      {
+        "site": "Episode 21 - Scars",
+        "url": "http://www.crunchyroll.com/watch/G2XU0D7DM/scars"
+      },
+      {
+        "site": "Episode 22 - Blue Night",
+        "url": "http://www.crunchyroll.com/watch/GWDU8EMP4/blue-night"
+      },
+      {
+        "site": "Episode 23 - Tears like Rain",
+        "url": "http://www.crunchyroll.com/watch/GZ7UV2MME/tears-like-rain"
+      },
+      {
+        "site": "Episode 24 - His Wish",
+        "url": "http://www.crunchyroll.com/watch/GG1U24V9N/his-wish"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/vanitas_anime"
+      },
+      {
+        "site": "Official Site",
+        "url": "https://vanitas-anime.com/"
+      },
+      {
+        "site": "Hulu",
+        "url": "https://www.hulu.com/series/the-case-study-of-vanitas-1df7cad6-b21c-4635-ac24-a49101556dc5"
+      },
+      {
+        "site": "iQ",
+        "url": "https://www.iq.com/album/aby6s6oxih"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "https://www.crunchyroll.com/the-case-study-of-vanitas"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/131646",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\the_case_study_of_vanitas_part_2.jpg"
+  },
+  "cells_at_work": {
+    "anilist_id": 100977,
+    "synopsis": "The average human body contains about 60 trillion cells, and each of them has work to do! But when you get injured, viruses or bacteria invade, or when an allergic reaction flares up, everyone from the silent but deadly white blood cells to the brainy neurons has to work together to get through the crisis!<br> <br> (Source: Kodansha US)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100977-nH1J2dR7GGAk.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=Ek39M_lYUtE",
+    "watch_links": [
+      {
+        "site": "Episode 1 - Pneumococcus",
+        "url": "http://www.crunchyroll.com/watch/GWDU8PDE0/pneumococcus"
+      },
+      {
+        "site": "Episode 2 - Scrape Wound",
+        "url": "http://www.crunchyroll.com/watch/GG1U2DG4P/scrape-wound"
+      },
+      {
+        "site": "Episode 3 - Influenza",
+        "url": "http://www.crunchyroll.com/watch/G0DUN98DV/influenza"
+      },
+      {
+        "site": "Episode 4 - Food Poisoning",
+        "url": "http://www.crunchyroll.com/watch/GEVUZ8EX5/food-poisoning"
+      },
+      {
+        "site": "Episode 5 - Cedar Pollen Allergies",
+        "url": "http://www.crunchyroll.com/watch/G9DUED35D/cedar-pollen-allergies"
+      },
+      {
+        "site": "Episode 6 - Erythroblasts and Myelocytes",
+        "url": "http://www.crunchyroll.com/watch/GX9UQK0J7/erythroblasts-and-myelocytes"
+      },
+      {
+        "site": "Episode 7 - Cancer Cell",
+        "url": "http://www.crunchyroll.com/watch/G14U4XM9W/cancer-cell"
+      },
+      {
+        "site": "Episode 8 - Blood Circulation",
+        "url": "http://www.crunchyroll.com/watch/GJWU2JV9G/blood-circulation"
+      },
+      {
+        "site": "Episode 9 - Thymocyte",
+        "url": "http://www.crunchyroll.com/watch/GK9U38XM1/thymocyte"
+      },
+      {
+        "site": "Episode 10 - Staphylococcus Aureus",
+        "url": "http://www.crunchyroll.com/watch/G31UX79WW/staphylococcus-aureus"
+      },
+      {
+        "site": "Episode 11 - Heat Stroke",
+        "url": "http://www.crunchyroll.com/watch/G8WUN2M13/heat-stroke"
+      },
+      {
+        "site": "Episode 12 - Hemorrhagic Shock Part 1",
+        "url": "http://www.crunchyroll.com/watch/GZ7UVP4E3/hemorrhagic-shock-part-1"
+      },
+      {
+        "site": "Episode 13 - Hemorrhagic Shock Part 2",
+        "url": "http://www.crunchyroll.com/watch/GQJUGE23G/hemorrhagic-shock-part-2"
+      },
+      {
+        "site": "Episode 14 - The Common Cold",
+        "url": "http://www.crunchyroll.com/watch/G50UZE5VM/the-common-cold"
+      },
+      {
+        "site": "Official Site",
+        "url": "http://hataraku-saibou.com/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/hataraku_saibou"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "http://www.crunchyroll.com/cells-at-work"
+      },
+      {
+        "site": "Netflix",
+        "url": "https://www.netflix.com/title/81028791"
+      },
+      {
+        "site": "YouTube",
+        "url": "https://youtube.com/playlist?list=PLwLSw1_eDZl2jD4HobdnUs3oOdkDNwQGq&si=nMq7BfTrJQ-FbH-g"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/100977",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\cells_at_work.jpg"
+  },
+  "bungo_stray_dogs_2": {
+    "anilist_id": 21679,
+    "synopsis": "The second season of <i>Bungou Stray Dogs</i>.<br> <br> Despite their differences in position, three men—the youngest senior executive of the Port Mafia, Osamu Dazai, the lowest ranking member, Sakunosuke Oda, and the intelligence agent, Angou Sakaguchi—gather at the Lupin Bar at the end of the day to relax and take delight in the company of friends.<br></br> However, one night, Angou disappears. A photograph taken at the bar is all that is left of the three together.<br></br> Fast forward to the present, and Dazai is now a member of the Armed Detective Agency. The Guild, an American gifted organization, has entered the fray and is intent on taking the Agency's work permit. They must now divide their attention between the two groups, the Guild and the Port Mafia, who oppose their very existence.",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21679-9MKdz1A7YLV7.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=aeX94e7V0_w",
+    "watch_links": [
+      {
+        "site": "Episode 1 - Fortune Is Unpredictable and Mutable",
+        "url": "http://www.crunchyroll.com/watch/GR1XD1D0R/fortune-is-unpredictable-and-mutable"
+      },
+      {
+        "site": "Episode 2 - A Certain Bomb",
+        "url": "http://www.crunchyroll.com/watch/GYNVDGD8R/a-certain-bomb"
+      },
+      {
+        "site": "Episode 3 - Yokohama Gangster Paradise",
+        "url": "http://www.crunchyroll.com/watch/G6MEXWX3R/yokohama-gangster-paradise"
+      },
+      {
+        "site": "Episode 4 - The Tragedy of the Fatalist",
+        "url": "http://www.crunchyroll.com/watch/G63K3N3Z6/the-tragedy-of-the-fatalist"
+      },
+      {
+        "site": "Episode 5 - Murder on D Street",
+        "url": "http://www.crunchyroll.com/watch/GR24VJV96/murder-on-d-street"
+      },
+      {
+        "site": "Episode 6 - The Azure Messenger",
+        "url": "http://www.crunchyroll.com/watch/GRZJ0V0M6/the-azure-messenger"
+      },
+      {
+        "site": "Episode 7 - Love for the Disease Called Ideals",
+        "url": "http://www.crunchyroll.com/watch/G6QWN7N76/love-for-the-disease-called-ideals"
+      },
+      {
+        "site": "Episode 8 - Teaching Them To Kill; Then To Die",
+        "url": "http://www.crunchyroll.com/watch/GYW45N536/teaching-them-to-kill-then-to-die"
+      },
+      {
+        "site": "Episode 9 - The Beauty Is Quiet Like a Stone Statue",
+        "url": "http://www.crunchyroll.com/watch/GR0XK44VY/the-beauty-is-quiet-like-a-stone-statue"
+      },
+      {
+        "site": "Episode 10 - Rashoumon and the Tiger",
+        "url": "http://www.crunchyroll.com/watch/GR79G3356/rashoumon-and-the-tiger"
+      },
+      {
+        "site": "Episode 11 - First, an Unsuitable Profession for Her. Second, an Ecstatic Detective Agency.",
+        "url": "http://www.crunchyroll.com/watch/G6XJWKKMR/first-an-unsuitable-profession-for-her-second-an-ecstatic-detective-agency"
+      },
+      {
+        "site": "Episode 12 - Borne Back Ceaselessly into the Past",
+        "url": "http://www.crunchyroll.com/watch/GY1XD110Y/borne-back-ceaselessly-into-the-past"
+      },
+      {
+        "site": "Official Site",
+        "url": "http://bungo-stray-dogs.jp/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/bungosd_anime"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "http://www.crunchyroll.com/bungo-stray-dogs"
+      },
+      {
+        "site": "Netflix",
+        "url": "https://www.netflix.com/title/80132126"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/21679",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\bungo_stray_dogs_2.jpg"
+  },
+  "my_love_story": {
+    "anilist_id": 20946,
+    "synopsis": "Takeo Gouda is a giant guy with a giant heart. Too bad the girls don't want him! (They always go for his good-looking best friend, Sunakawa.) Used to being on the sidelines, Takeo simply stands tall and accepts his fate. But one day when he saves a girl named Yamato from a harasser on the train, his (love!) life suddenly takes an incredible turn! Takeo can hardly believe it when he crosses paths with Yamato again, and he finds himself falling in love with her… But with handsome Sunakawa around, does Takeo even stand a chance?<br><br> (Source: Crunchyroll)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20946-ejH7JhG6z25y.png",
+    "trailer_url": "https://www.youtube.com/watch?v=GdB0LsAceGE",
+    "watch_links": [
+      {
+        "site": "Episode 1 - My Story",
+        "url": "http://www.crunchyroll.com/watch/G63VMVXMY/my-story"
+      },
+      {
+        "site": "Episode 2 - My Romance",
+        "url": "http://www.crunchyroll.com/watch/GR2PEP9MR/my-romance"
+      },
+      {
+        "site": "Episode 3 - My Blue Ogre",
+        "url": "http://www.crunchyroll.com/watch/GRZXDXZKY/my-blue-ogre"
+      },
+      {
+        "site": "Episode 4 - My Boyfriend",
+        "url": "http://www.crunchyroll.com/watch/G6Q4Q4Z2R/my-boyfriend"
+      },
+      {
+        "site": "Episode 5 - I'm Dense",
+        "url": "http://www.crunchyroll.com/watch/GYWE2E88Y/im-dense"
+      },
+      {
+        "site": "Episode 6 - My Wish",
+        "url": "http://www.crunchyroll.com/watch/GR09G9E0R/my-wish"
+      },
+      {
+        "site": "Episode 7 - My Strength",
+        "url": "http://www.crunchyroll.com/watch/GR75K5N3Y/my-strength"
+      },
+      {
+        "site": "Episode 8 - My Friend",
+        "url": "http://www.crunchyroll.com/watch/G6X0308PY/my-friend"
+      },
+      {
+        "site": "Episode 9 - My Friend and I",
+        "url": "http://www.crunchyroll.com/watch/GY1909PKR/my-friend-and-i"
+      },
+      {
+        "site": "Episode 10 - My Mountain",
+        "url": "http://www.crunchyroll.com/watch/GYQ4Q4546/my-mountain"
+      },
+      {
+        "site": "Episode 11 - My Ocean",
+        "url": "http://www.crunchyroll.com/watch/GRWE2E9MR/my-ocean"
+      },
+      {
+        "site": "Episode 12 - My Grades",
+        "url": "http://www.crunchyroll.com/watch/G609G9ZG6/my-grades"
+      },
+      {
+        "site": "Episode 13 - Today Is on Me",
+        "url": "http://www.crunchyroll.com/watch/G675K5DMR/today-is-on-me"
+      },
+      {
+        "site": "Episode 14 - My Jinx",
+        "url": "http://www.crunchyroll.com/watch/GYX030D2R/my-jinx"
+      },
+      {
+        "site": "Episode 15 - My Girlfriend",
+        "url": "http://www.crunchyroll.com/watch/GR1909PZ6/my-girlfriend"
+      },
+      {
+        "site": "Episode 16 - My Disciple",
+        "url": "http://www.crunchyroll.com/watch/GYNQXQKZY/my-disciple"
+      },
+      {
+        "site": "Episode 17 - My Christmas",
+        "url": "http://www.crunchyroll.com/watch/G6MGPGN56/my-christmas"
+      },
+      {
+        "site": "Episode 18 - My Birthday",
+        "url": "http://www.crunchyroll.com/watch/G63VMV5NY/my-birthday"
+      },
+      {
+        "site": "Episode 19 - My Mom",
+        "url": "http://www.crunchyroll.com/watch/GR2PEPQ8R/my-mom"
+      },
+      {
+        "site": "Episode 20 - My Chocolate",
+        "url": "http://www.crunchyroll.com/watch/GRZXDXM3Y/my-chocolate"
+      },
+      {
+        "site": "Episode 21 - The Letter and Me",
+        "url": "http://www.crunchyroll.com/watch/G6Q4Q4E4R/the-letter-and-me"
+      },
+      {
+        "site": "Episode 22 - The Letter to Me",
+        "url": "http://www.crunchyroll.com/watch/GYWE2EJMY/the-letter-to-me"
+      },
+      {
+        "site": "Episode 23 - My Spring Break",
+        "url": "http://www.crunchyroll.com/watch/GR09G90GR/my-spring-break"
+      },
+      {
+        "site": "Episode 24 - My Heart",
+        "url": "http://www.crunchyroll.com/watch/GR75K5JMY/my-heart"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "http://www.crunchyroll.com/my-love-story"
+      },
+      {
+        "site": "Hulu",
+        "url": "http://www.hulu.com/my-love-story"
+      },
+      {
+        "site": "Official Site",
+        "url": "http://www.vap.co.jp/anime-ore/index.html"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/anime_ore"
+      },
+      {
+        "site": "Amazon Prime Video",
+        "url": "https://www.amazon.com/dp/B07WFX8CYS/"
+      },
+      {
+        "site": "HIDIVE",
+        "url": "https://www.hidive.com/tv/my-love-story"
+      },
+      {
+        "site": "Bilibili TV",
+        "url": "https://www.bilibili.tv/en/media/36611"
+      },
+      {
+        "site": "Netflix",
+        "url": "https://www.netflix.com/title/81409988"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/20946",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\my_love_story.jpg"
+  },
+  "parallel_world_pharmacy": {
+    "anilist_id": 136707,
+    "synopsis": "A young pharmacologist and researcher in Japan died from overworking, and was reincarnated in a Medieval Parallel Europe. He was reincarnated as a 10-year-old apprentice to a famous Royal Court pharmacist, had attained an inhuman skills of ability to see through disease, material creation, and material destruction.<br> <br> In a society in which dubious medical practice are rampant, price gouging thru the monopoly of the pharmacist guild, and good medicine aren't available to the commoners. He was recognized by the Emperor at that time and opened a Pharmacy at the corner of the town. He will wipe out the fraud that has swept the world, and deliver to the commoners a truly effective medicine that was developed using present day pharmacology. Thus the boy pharmacist will cheat by using his previous knowledge to create innovative medicines while helping the people of the parallel world, a story about living his new life to the fullest this time.",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx136707-StRFbEwZT7q5.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=fh7QGRKQ-IA",
+    "watch_links": [
+      {
+        "site": "Official Site",
+        "url": "https://isekai-yakkyoku.jp/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/isekai_yakkyoku"
+      },
+      {
+        "site": "YouTube",
+        "url": "https://www.youtube.com/playlist?list=PLwLSw1_eDZl1ZHXQDzK5Qit6jqLTNzjZ3"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "https://www.crunchyroll.com/series/G24H1NJJD/parallel-world-pharmacy"
+      },
+      {
+        "site": "Bilibili TV",
+        "url": "https://www.bilibili.tv/en/media/1062554"
+      },
+      {
+        "site": "YouTube",
+        "url": "https://www.youtube.com/playlist?list=PLpm1VVK4UL1548fYEI4WA4uJ9snfpGm6J"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/136707",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\parallel_world_pharmacy.jpg"
+  },
+  "potions": {
+    "anilist_id": 161992,
+    "synopsis": "Nagase Kaoru, a 22-year-old office lady, suddenly finds herself reincarnated in another world. To help her survive in this new world, a being that amounts to its god gives Kaoru a younger body and... the ability to make insanely overpowered potions?! The reincarnated Kaoru must use her knowledge and cheatery to survive!<br> <br> (Source: Crunchyroll)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx161992-XwIJpQUHXwQv.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=T-Ll3NMLgsM",
+    "watch_links": [
+      {
+        "site": "Episode 1 - Perks of Reincarnation, Please!",
+        "url": "http://www.crunchyroll.com/watch/GQJUGVK24/perks-of-reincarnation-please"
+      },
+      {
+        "site": "Episode 2 - My Goal Is a Safe, Worry-Free Life in Another World!",
+        "url": "http://www.crunchyroll.com/watch/G0DUND8D0/my-goal-is-a-safe-worry-free-life-in-another-world"
+      },
+      {
+        "site": "Episode 3 - I'm Gonna Go Speak My Mind at the Castle!",
+        "url": "http://www.crunchyroll.com/watch/GQJUGVQ38/im-gonna-go-speak-my-mind-at-the-castle"
+      },
+      {
+        "site": "Episode 4 - I'm Going into Angel Mode to Fight Back!",
+        "url": "http://www.crunchyroll.com/watch/G8WUNG1VX/im-going-into-angel-mode-to-fight-back"
+      },
+      {
+        "site": "Episode 5 - I'll Use the Goddess's Potions to Do Business!",
+        "url": "http://www.crunchyroll.com/watch/GQJUGV3VM/ill-use-the-goddesss-potions-to-do-business"
+      },
+      {
+        "site": "Episode 6 - I'll Use My Cheat to Destroy an Army!",
+        "url": "http://www.crunchyroll.com/watch/G7PU41PDP/ill-use-my-cheat-to-destroy-an-army"
+      },
+      {
+        "site": "Episode 7 - The Goddess Descends to End the War!",
+        "url": "http://www.crunchyroll.com/watch/G14U41J44/the-goddess-descends-to-end-the-war"
+      },
+      {
+        "site": "Episode 8 - I'm Seen as a Beautiful Girl and Abducted!",
+        "url": "http://www.crunchyroll.com/watch/GWDU8J341/im-seen-as-a-beautiful-girl-and-abducted"
+      },
+      {
+        "site": "Episode 9 - \"I'm Going to Relax in a Hot Spring for a While!",
+        "url": "http://www.crunchyroll.com/watch/GPWUKVKGE/im-going-to-relax-in-a-hot-spring-for-a-while"
+      },
+      {
+        "site": "Episode 10 - Going Back to My Original Goal in a New Country!",
+        "url": "http://www.crunchyroll.com/watch/G31UX4VMJ/going-back-to-my-original-goal-in-a-new-country"
+      },
+      {
+        "site": "Episode 11 - I'll Find a Husband with a Treasure Hunt!",
+        "url": "http://www.crunchyroll.com/watch/G7PU418W9/ill-find-a-husband-with-a-treasure-hunt"
+      },
+      {
+        "site": "Episode 12 - I Shall Survive Using Potions!",
+        "url": "http://www.crunchyroll.com/watch/GD9UV3124/i-shall-survive-using-potions"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/potion_apr"
+      },
+      {
+        "site": "Official Site",
+        "url": "https://potion-anime.com/"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "https://www.crunchyroll.com/series/G1XHJV0ZV/i-shall-survive-using-potions"
+      },
+      {
+        "site": "Bilibili TV",
+        "url": "https://www.bilibili.tv/en/media/2092788"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/161992",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\potions.jpg"
+  },
+  "made_in_abyss_dawn_of_the_deep_soul": {
+    "anilist_id": 100643,
+    "synopsis": "<i>Dawn of the Deep Soul</i> continues the epic adventure of plucky Riko and Reg who are joined by their new friend Nanachi. Together they descend into the Abyss’ treacherous fifth layer, the Sea of Corpses, and encounter the mysterious Bondrewd, a legendary White Whistle whose shadow looms over Nanachi’s troubled past. Bondrewd is ingratiatingly hospitable, but the brave adventurers know things are not always as they seem in the enigmatic Abyss...<br> <br> (Source: Sentai Filmworks)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100643-fPH9OgEKKvcI.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=NNwD_Hx1GHY",
+    "watch_links": [
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/miabyss_anime"
+      },
+      {
+        "site": "HIDIVE",
+        "url": "https://www.hidive.com/movies/made-in-abyss-dawn-of-the-deep-soul"
+      },
+      {
+        "site": "Official Site",
+        "url": "http://miabyss.com/movie/index.html"
+      },
+      {
+        "site": "Hulu",
+        "url": "https://www.hulu.com/movie/made-in-abyss-dawn-of-the-deep-soul-cf4cd681-06a3-4aaf-9f13-ab5137f6a821"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/100643",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\made_in_abyss_dawn_of_the_deep_soul.jpg"
+  },
+  "tada_never_falls_in_love": {
+    "anilist_id": 100179,
+    "synopsis": "Mitsuyoshi Tada, a boy who has never known love, is taking pictures of the cherry blossoms in full bloom when he meets Teresa Wagner, a transfer student from Luxembourg. Upon arriving in Japan, she got lost, separated from her travel companion. Mitsuyoshi helps her and brings her to his grandfather's coffee shop. <br><br> (Source: Anime News Network)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100179-jDGTOMxtoDkt.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=4LCOgIeRCh0",
+    "watch_links": [
+      {
+        "site": "Official Site",
+        "url": "http://tadakoi.tv/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/tadakoi_anime"
+      },
+      {
+        "site": "YouTube",
+        "url": "https://www.youtube.com/playlist?list=PLwLSw1_eDZl2qmzRU6SDdKO6Ob4HYKcBK"
+      },
+      {
+        "site": "Hoopla",
+        "url": "https://www.hoopladigital.com/television/tada-never-falls-in-love-season-1-yuichi-nakamura/16309481"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/100179",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\tada_never_falls_in_love.jpg"
+  },
+  "erased": {
+    "anilist_id": 21234,
+    "synopsis": "Satoru Fujinuma is a 29 year old manga artist struggling to make a name for himself following his debut. But, that was not the only thing in his life that Satoru was feeling frustrated about… He has a unique supernatural ability of being forced to prevent deaths and catastrophes by being sent back in time before the incident occurred, repeating time until the accident is prevented. One day, he gets involved in an accident that has him framed as a murderer. Desperate to save the victim, he sends himself back in time only to find himself as a grade-schooler one month before fellow classmate Kayo Hinazuki went missing. Satoru now embarks on a new quest: to save Kayo and solve the mystery behind her disappearance.",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21234-XmqW39aQ9o7O.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=TZzMOC-4k6M",
+    "watch_links": [
+      {
+        "site": "Episode 1 - Flashing Before My Eyes",
+        "url": "http://www.crunchyroll.com/watch/GYE5K9JQR/flashing-before-my-eyes"
+      },
+      {
+        "site": "Episode 2 - Palm of the Hand",
+        "url": "http://www.crunchyroll.com/watch/GR9PM0516/palm-of-the-hand"
+      },
+      {
+        "site": "Episode 3 - Birthmark",
+        "url": "http://www.crunchyroll.com/watch/GR49MJ7Z6/birthmark"
+      },
+      {
+        "site": "Episode 4 - Accomplishment",
+        "url": "http://www.crunchyroll.com/watch/GRJQ138WY/accomplishment"
+      },
+      {
+        "site": "Episode 5 - Getaway",
+        "url": "http://www.crunchyroll.com/watch/GY5VXQ3PY/getaway"
+      },
+      {
+        "site": "Episode 6 - Grim Reaper",
+        "url": "http://www.crunchyroll.com/watch/GRGG9284R/grim-reaper"
+      },
+      {
+        "site": "Episode 6.5 - ERASED 1-6 Digest",
+        "url": "http://www.crunchyroll.com/watch/GRE5K98P6/erased-1-6-digest"
+      },
+      {
+        "site": "Episode 7 - Out of Control",
+        "url": "http://www.crunchyroll.com/watch/G69PM0W0Y/out-of-control"
+      },
+      {
+        "site": "Episode 8 - Spiral",
+        "url": "http://www.crunchyroll.com/watch/G649MJ33Y/spiral"
+      },
+      {
+        "site": "Episode 9 - Closure",
+        "url": "http://www.crunchyroll.com/watch/G6JQ138DR/closure"
+      },
+      {
+        "site": "Episode 10 - Joy",
+        "url": "http://www.crunchyroll.com/watch/G6K5XM81Y/joy"
+      },
+      {
+        "site": "Episode 11 - Future",
+        "url": "http://www.crunchyroll.com/watch/GRVNEZ4QY/future"
+      },
+      {
+        "site": "Episode 12 - Treasure",
+        "url": "http://www.crunchyroll.com/watch/G6P8XVGM6/treasure"
+      },
+      {
+        "site": "Official Site",
+        "url": "http://bokumachi-anime.com/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/bokumachi_anime"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "http://www.crunchyroll.com/erased"
+      },
+      {
+        "site": "Hulu",
+        "url": "https://www.hulu.com/series/erased-40cf1997-7291-4764-a80c-c264294fa691"
+      },
+      {
+        "site": "Netflix",
+        "url": "https://www.netflix.com/title/80114225"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/21234",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\erased.jpg"
+  },
+  "kaguya_sama": {
+    "anilist_id": 101921,
+    "synopsis": "Known for being both brilliant and powerful, Miyuki Shirogane and Kaguya Shinomiya lead the illustrious Shuchiin Academy as near equals. And everyone thinks they’d make a great couple. Pride and arrogance are in ample supply, so the only logical move is to trick the other into instigating a date! Who will come out on top in this psychological war where the first move is the only one that matters? <br><br> (Source: Aniplex)",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101921-ufrjLzhSz7L1.jpg",
+    "trailer_url": "https://www.youtube.com/watch?v=IwpJJiQkZzI",
+    "watch_links": [
+      {
+        "site": "Episode 1 - I Will Make You Invite Me to a Movie / Kaguya Wants to Be Stopped / Kaguya Wants It",
+        "url": "http://www.crunchyroll.com/watch/GD9UVWXGX/i-will-make-you-invite-me-to-a-movie-kaguya-wants-to-be-stopped-kaguya-wants-it"
+      },
+      {
+        "site": "Episode 2 - Kaguya Wants to Trade / Chika Wants to Go Somewhere / Miyuki Wants to Hide His Ignorance",
+        "url": "http://www.crunchyroll.com/watch/G0DUN08NG/kaguya-wants-to-trade-chika-wants-to-go-somewhere-miyuki-wants-to-hide-his-ignorance"
+      },
+      {
+        "site": "Episode 3 - Miyuki Shirogane Still Hasn't Done It / Kaguya Wants to Be Figured Out / Kaguya Wants to Walk",
+        "url": "http://www.crunchyroll.com/watch/G14U4EM4Z/miyuki-shirogane-still-hasnt-done-it-kaguya-wants-to-be-figured-out-kaguya-wants-to-walk"
+      },
+      {
+        "site": "Episode 4 - Kaguya Wants Affection / The Student Council Wants It to Be Said / Kaguya Wants Him to Send It / Miyuki Shirogane Wants to Talk",
+        "url": "http://www.crunchyroll.com/watch/G50UZ45ZE/kaguya-wants-affection-the-student-council-wants-it-to-be-said-kaguya-wants-him-to-send-it-miyuki-shirogane-wants-to-talk"
+      },
+      {
+        "site": "Episode 5 - Kaguya Wants to Handle It / Miyuki Shirogane Wants to Show Off / Kaguya Wants to Be Covered",
+        "url": "http://www.crunchyroll.com/watch/G7PU4V94E/kaguya-wants-to-handle-it-miyuki-shirogane-wants-to-show-off-kaguya-wants-to-be-covered"
+      },
+      {
+        "site": "Episode 6 - Yu Ishigami Wants to Live / Chika Fujiwara Wants to Test You / Kaguya Wants to Be Noticed",
+        "url": "http://www.crunchyroll.com/watch/G4VUQX2Q8/yu-ishigami-wants-to-live-chika-fujiwara-wants-to-test-you-kaguya-wants-to-be-noticed"
+      },
+      {
+        "site": "Episode 7 - Miyuki Shirogane Wants to Work / Kaguya Wants Him to Join In / Kaguya Wants to Control It",
+        "url": "http://www.crunchyroll.com/watch/GK9U34XGV/miyuki-shirogane-wants-to-work-kaguya-wants-him-to-join-in-kaguya-wants-to-control-it"
+      },
+      {
+        "site": "Episode 8 - Kaguya Wants Her to Say It / Miyuki Shirogane Can't Lose / Yu Ishigami Closes His Eyes",
+        "url": "http://www.crunchyroll.com/watch/GVWU0Z982/kaguya-wants-her-to-say-it-miyuki-shirogane-cant-lose-yu-ishigami-closes-his-eyes"
+      },
+      {
+        "site": "Episode 9 - Kaguya Wants to Give a Gift / Chika Fujiwara Wants to Pay a Visit / About Kaguya Shinomiya, Part 1",
+        "url": "http://www.crunchyroll.com/watch/G2XU03QN9/kaguya-wants-to-give-a-gift-chika-fujiwara-wants-to-pay-a-visit-about-kaguya-shinomiya-part-1"
+      },
+      {
+        "site": "Episode 10 - Kaguya Won't Forgive / Kaguya Wants to Forgive / Miyuki Shirogane Wants to Go Somewhere",
+        "url": "http://www.crunchyroll.com/watch/GD9UVWXE4/kaguya-wont-forgive-kaguya-wants-to-forgive-miyuki-shirogane-wants-to-go-somewhere"
+      },
+      {
+        "site": "Episode 11 - Ai Hayasaka Wants to Get Soaked / Chika Fujiwara Really Wants to Eat It / Miyuki Shirogane Wants to See You / I Can't Hear the Fireworks, Part 1",
+        "url": "http://www.crunchyroll.com/watch/GG1U2EGX0/ai-hayasaka-wants-to-get-soaked-chika-fujiwara-really-wants-to-eat-it-miyuki-shirogane-wants-to-see-you-i-cant-hear-the-fireworks-part-1"
+      },
+      {
+        "site": "Episode 12 - I Can't Hear the Fireworks, Part 2 / Kaguya Doesn't Want to Avoid Him",
+        "url": "http://www.crunchyroll.com/watch/G9DUEP398/i-cant-hear-the-fireworks-part-2-kaguya-doesnt-want-to-avoid-him"
+      },
+      {
+        "site": "Official Site",
+        "url": "https://kaguya.love/1st/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://twitter.com/anime_kaguya"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "https://www.crunchyroll.com/kaguya-sama-love-is-war"
+      },
+      {
+        "site": "Netflix",
+        "url": "https://www.netflix.com/title/81061754"
+      },
+      {
+        "site": "iQ",
+        "url": "https://www.iq.com/album/ofodkfc1h1"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/101921",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\kaguya_sama.jpg"
+  },
+  "gurren_lagann": {
+    "anilist_id": 2001,
+    "synopsis": "In a far away future, mankind lives underground in huge caves, unknowing of a world above with a sky and stars.<br><br> In the small village of Jiha, Simon, a shy boy who works as a digger discovers a strange glowing object during excavation. The enterprising Kamina, a young man with a pair of rakish sunglasses and the passion of a firey sun, befriends Simon and forms a small band of brothers, the Gurren Brigade, to escape the village and break through the ceiling of the cave to reach the surface, which few believe exist.<br><br> The village elder won't hear of such foolishness and punishes the Brigade. However, when disaster strikes from the world above and the entire village is in jeopardy, it's up to Simon, Kamina, a girl with a big gun named Yoko, and the small yet sturdy robot, Lagann, to save the day.<br><br> The new friends journey to the world above and find that the surface is a harsh battlefield, and it's up to them to fight back against the rampaging Beastmen to turn the tide in the humans' favor! Pierce the heavens, Gurren Lagann!",
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx2001-XwRnjzGeFWRQ.png",
+    "trailer_url": "https://www.youtube.com/watch?v=oXkkMhCuCMg",
+    "watch_links": [
+      {
+        "site": "Episode 1 - Bust Through the Heavens With Your Drill",
+        "url": "http://www.crunchyroll.com/watch/GR751WEKY/bust-through-the-heavens-with-your-drill"
+      },
+      {
+        "site": "Episode 2 - I Said I'm Gonna Pilot That Thing!",
+        "url": "http://www.crunchyroll.com/watch/G6X0MVXEY/i-said-im-gonna-pilot-that-thing"
+      },
+      {
+        "site": "Episode 3 - Who Do You Think You Are, Having Two Faces!?",
+        "url": "http://www.crunchyroll.com/watch/GY19QJMGR/who-do-you-think-you-are-having-two-faces"
+      },
+      {
+        "site": "Episode 4 - Having Lots of Faces Doesn't Make You Great!",
+        "url": "http://www.crunchyroll.com/watch/G6NQJM426/having-lots-of-faces-doesnt-make-you-great"
+      },
+      {
+        "site": "Episode 5 - I Don't Get It, Not One Bit!",
+        "url": "http://www.crunchyroll.com/watch/GRMG8M9ZR/i-dont-get-it-not-one-bit"
+      },
+      {
+        "site": "Episode 6 - Sit in the Hot Tub 'Til You're Sick",
+        "url": "http://www.crunchyroll.com/watch/GR3VWJ296/sit-in-the-hot-tub-til-youre-sick"
+      },
+      {
+        "site": "Episode 7 - You're Gonna Do It!!",
+        "url": "http://www.crunchyroll.com/watch/GY2P5N3JY/youre-gonna-do-it"
+      },
+      {
+        "site": "Episode 8 - Later, Buddy",
+        "url": "http://www.crunchyroll.com/watch/GYZX45N86/later-buddy"
+      },
+      {
+        "site": "Episode 9 - What, Exactly, Is a Human?",
+        "url": "http://www.crunchyroll.com/watch/GRQ493GGY/what-exactly-is-a-human"
+      },
+      {
+        "site": "Episode 10 - Who Is This Bro?",
+        "url": "http://www.crunchyroll.com/watch/G6WEMKGE6/who-is-this-bro"
+      },
+      {
+        "site": "Episode 11 - Simon, Hands Off",
+        "url": "http://www.crunchyroll.com/watch/GY097WV7Y/simon-hands-off"
+      },
+      {
+        "site": "Episode 12 - Yoko, Will You Do Me a Favor?",
+        "url": "http://www.crunchyroll.com/watch/GY7514VK6/yoko-will-you-do-me-a-favor"
+      },
+      {
+        "site": "Episode 13 - Eat Up, Everyone!",
+        "url": "http://www.crunchyroll.com/watch/GRX0M27E6/eat-up-everyone"
+      },
+      {
+        "site": "Episode 14 - Well Met, Everyone",
+        "url": "http://www.crunchyroll.com/watch/G619QGKGY/well-met-everyone"
+      },
+      {
+        "site": "Episode 15 - I Will Head Towards Tomorrow",
+        "url": "http://www.crunchyroll.com/watch/GRNQJ302R/i-will-head-towards-tomorrow"
+      },
+      {
+        "site": "Episode 16 - Compilation Episode",
+        "url": "http://www.crunchyroll.com/watch/GYMG834ZY/compilation-episode"
+      },
+      {
+        "site": "Episode 17 - You Don't Know Anything",
+        "url": "http://www.crunchyroll.com/watch/GY3VWE49R/you-dont-know-anything"
+      },
+      {
+        "site": "Episode 18 - Tell Me the Secrets of This World",
+        "url": "http://www.crunchyroll.com/watch/G62P50KJ6/tell-me-the-secrets-of-this-world"
+      },
+      {
+        "site": "Episode 19 - We Will Survive by Any Means Necessary",
+        "url": "http://www.crunchyroll.com/watch/G6ZX4K38R/we-will-survive-by-any-means-necessary"
+      },
+      {
+        "site": "Episode 20 - How Far Will God Test Us?",
+        "url": "http://www.crunchyroll.com/watch/GYQ493JG6/how-far-will-god-test-us"
+      },
+      {
+        "site": "Episode 21 - You Are Someone Who Ought to Survive",
+        "url": "http://www.crunchyroll.com/watch/GRWEMKDER/you-are-someone-who-ought-to-survive"
+      },
+      {
+        "site": "Episode 22 - This is My Final Duty",
+        "url": "http://www.crunchyroll.com/watch/G6097WD76/this-is-my-final-duty"
+      },
+      {
+        "site": "Episode 23 - Let's Go, This is the Final Battle",
+        "url": "http://www.crunchyroll.com/watch/G67514PKR/lets-go-this-is-the-final-battle"
+      },
+      {
+        "site": "Episode 24 - I Will Never Forget This Minute, This Second",
+        "url": "http://www.crunchyroll.com/watch/GYX0M29ER/i-will-never-forget-this-minute-this-second"
+      },
+      {
+        "site": "Episode 25 - I Accept Your Last Wish",
+        "url": "http://www.crunchyroll.com/watch/GR19QG4G6/i-accept-your-last-wish"
+      },
+      {
+        "site": "Episode 26 - Let's Go, Buddy",
+        "url": "http://www.crunchyroll.com/watch/GYNQJ372Y/lets-go-buddy"
+      },
+      {
+        "site": "Episode 27 - The Lights In The Sky Are Stars",
+        "url": "http://www.crunchyroll.com/watch/G6MG83KZ6/the-lights-in-the-sky-are-stars"
+      },
+      {
+        "site": "Crunchyroll",
+        "url": "http://www.crunchyroll.com/gurren-lagann"
+      },
+      {
+        "site": "Hulu",
+        "url": "http://www.hulu.com/gurren-lagann"
+      },
+      {
+        "site": "Official Site",
+        "url": "https://www.gurren-lagann.net/"
+      },
+      {
+        "site": "Twitter",
+        "url": "https://x.com/Gurren_Project"
+      },
+      {
+        "site": "Official Site",
+        "url": "https://gurren-lagann15th.com/"
+      }
+    ],
+    "source_url": "https://anilist.co/anime/2001",
+    "local_image": "c:\\Users\\carlo\\Documents\\python-projects\\anime-app\\database\\anilist_images\\gurren_lagann.jpg"
   }
 }

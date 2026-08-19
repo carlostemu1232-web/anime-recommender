@@ -34,6 +34,23 @@ QMainWindow {
     background: #111111;
     border-right: 1px solid #333333;
 }
+#MobileNav {
+    background: #111a2b;
+    border-top: 1px solid #304766;
+    min-height: 62px;
+}
+#MobileNavButton {
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #aebbd0;
+    font-size: 10px;
+    padding: 5px 2px;
+}
+#MobileNavButton:hover, #MobileNavButton:pressed {
+    background: #263c59;
+    color: #ffffff;
+}
 #Brand {
     color: #a9c7ef;
     font-size: 24px;

@@ -10,9 +10,9 @@ The core application can work offline.
 
 ## 🚀 Version
 
-**Current version: v0.8**
+**Current version: v0.9**
 
-v0.8 consolidates the 1000-anime local catalog, franchise grouping, visual Home, Random discovery and asynchronous image loading.
+v0.9 adds Windows packaging with PyInstaller and an installer definition for Inno Setup.
 
 ---
 
@@ -268,11 +268,87 @@ PySide6
 
 Internet access is optional.
 
+The workspace virtual environment is located at:
+
+```text
+python-projects/.venv
+```
+
+Required packages are `PySide6`, `Pillow` and `PyInstaller` for packaging.
+
 ▶️ Run
 
 From the project directory:
 
 python main.py
+
+## 📦 Windows executable
+
+Packaging files:
+
+```text
+packaging/AniVerse.spec
+packaging/build.ps1
+packaging/AniVerse.iss
+```
+
+Build the portable application folder:
+
+```powershell
+cd "C:\Users\carlo\Documents\python-projects\anime-app"
+powershell -ExecutionPolicy Bypass -File packaging\build.ps1
+```
+
+The executable is generated at:
+
+```text
+dist/AniVerse/AniVerse.exe
+```
+
+The current portable ZIP has been rebuilt after the responsive mobile interface changes:
+
+```text
+dist/AniVerse-0.9.0-portable.zip
+```
+
+A portable download package is generated at:
+
+```text
+dist/AniVerse-0.9.0-portable.zip
+```
+
+To distribute AniVerse, upload this ZIP to a GitHub Release or another trusted download location. Users extract it and run `AniVerse.exe`; they do not need Python installed.
+
+The package includes the local catalog, SQLite database, fonts, icons, placeholders and cache data. User favorites and lists remain separate from the packaged catalog.
+
+After installing Inno Setup, open and compile:
+
+```text
+packaging/AniVerse.iss
+```
+
+APK packaging is documented separately in `packaging/ANDROID_BUILD.md`. The Windows PyInstaller package cannot generate an APK; Android SDK, NDK, JDK and the official PySide6 Android deployment toolchain are required.
+
+This creates:
+
+```text
+installer/AniVerse-0.9.0-Setup.exe
+```
+
+Manual test: launch `dist/AniVerse/AniVerse.exe`, test Home, Search, Random, Favorites, Lists and Details, then repeat once without Internet access.
+
+## 🔄 Future updates
+
+For a new version:
+
+1. Update the source code and catalog.
+2. Change the version in `packaging/AniVerse.iss` and the output filename.
+3. Run `packaging/build.ps1`.
+4. Test `dist/AniVerse/AniVerse.exe`.
+5. Create a new portable ZIP or compile the Inno Setup installer.
+6. Publish the new package as a new GitHub Release.
+
+Favorites, lists and user cache are kept outside the packaged catalog, so installing a new version should not overwrite them. A future automatic updater can compare the installed version with the latest GitHub Release and download the new package, but that updater is not included yet.
 🔄 Update the catalog
 python database/importer.py
 
@@ -313,6 +389,13 @@ Latest automated checks:
 - Random results: maximum 5
 - Random categories: mutually exclusive
 📜 Version History
+v0.9
+Added PyInstaller packaging configuration
+Added Windows build script
+Added Inno Setup installer definition
+Packaged local assets, fonts, icons, SQLite and cache data
+Kept user data separate from the installed catalog
+
 v0.8
 Added 800 AniList-verified catalog records
 Added deterministic franchise grouping
