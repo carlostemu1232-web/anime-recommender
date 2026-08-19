@@ -21,8 +21,10 @@ jobs:
 
       - name: Build debug APK
         working-directory: mobile_kivy
+        env:
+          BUILDOZER_WARN_ON_ROOT: "1"
         run: |
-          buildozer android debug
+          yes | buildozer android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
