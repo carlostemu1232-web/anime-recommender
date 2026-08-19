@@ -16,31 +16,92 @@ APP_NAME = 'AniVerse'
 
 THEME = '''
 QWidget {
-    background: #151515;
-    color: #f4f7fb;
+    background: #0f1726;
+    color: #d7deea;
     font-family: Arial;
     font-size: 13px;
 }
+QLabel {
+    background: transparent;
+}
 QMainWindow {
-    background: #151515;
+    background: #0f1726;
 }
 #Shell {
-    background: #151515;
+    background: #0f1726;
+}
+#Sidebar {
+    background: #111111;
+    border-right: 1px solid #333333;
 }
 #Brand {
-    color: #ff6a00;
-    font-size: 30px;
+    color: #a9c7ef;
+    font-size: 24px;
     font-weight: 800;
+}
+#TopSearch {
+    background: #202020;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #ffffff;
+}
+#TopSearch:focus {
+    border: 1px solid #555555;
+}
+#Avatar {
+    background: #282828;
+    border: 1px solid #555555;
+    border-radius: 17px;
+    color: #ff6a00;
+    font-family: Outfit;
+    font-weight: 800;
+}
+#SideNavButton {
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: #bdbdbd;
+    padding: 10px 4px;
+    font-size: 11px;
+}
+#SideNavButton:hover, #SideNavButton:pressed {
+    background: #282828;
+    color: #ffffff;
+}
+#GenreChoice {
+    background: #172235;
+    border: 1px solid #344c6a;
+    border-radius: 8px;
+    color: #d7deea;
+    min-height: 42px;
+}
+#GenreChoice:hover {
+    background: #263c59;
+}
+#GenreChoice:checked {
+    background: #355b89;
+    border: 1px solid #9fc5f8;
+    color: #ffffff;
+}
+#RandomPanel {
+    background: rgba(23, 34, 53, 165);
+    border: 1px solid rgba(52, 76, 106, 120);
+    border-radius: 10px;
+}
+#RandomResults {
+    background: transparent;
+    border: none;
 }
 #PageTitle {
     font-family: Outfit;
-    color: #f4f7fb;
+    color: #d7deea;
     font-size: 24px;
     font-weight: 700;
 }
 #PrincipalTitle {
     font-family: Outfit;
-    color: #ffffff;
+    color: #e5ebf5;
     font-size: 40px;
     font-weight: 800;
 }
@@ -50,10 +111,60 @@ QMainWindow {
     font-size: 20px;
     font-weight: 700;
 }
+#SeeMoreButton {
+    background: transparent;
+    border: none;
+    color: #9fc5f8;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+#SeeMoreButton:hover {
+    color: #ffffff;
+}
 #Hero {
+    background: #172235;
+    border: 1px solid #263750;
+    border-radius: 14px;
+}
+#HomeSection {
+    background: rgba(23, 34, 53, 150);
+    border: 1px solid rgba(52, 76, 106, 110);
+    border-radius: 10px;
+}
+#DetailProfile {
     background: #202020;
     border: 1px solid #333333;
+    border-radius: 12px;
+    padding: 6px;
+}
+#DetailHero {
+    min-height: 330px;
+    background: #172235;
+    border: 1px solid #263750;
     border-radius: 14px;
+    overflow: hidden;
+}
+#PartsPanel {
+    background: #202020;
+    border: 1px solid #333333;
+    border-radius: 12px;
+}
+#DetailBackdrop {
+    background: #202020;
+    opacity: 0.42;
+}
+#DetailOverlay {
+    background: rgba(7, 12, 20, 225);
+}
+#DetailStats, #BiographyPanel {
+    background: rgba(23, 34, 53, 190);
+    border: 1px solid rgba(52, 76, 106, 120);
+    border-radius: 10px;
+    padding: 8px;
+}
+#DetailOverlay QLabel {
+    color: #d7deea;
+    background: transparent;
 }
 #HeroTitle {
     font-family: Outfit;
@@ -78,51 +189,71 @@ QMainWindow {
     color: #ffffff;
 }
 #AnimeCard, #ListRow {
-    background: #202020;
-    border: 1px solid #333333;
-    border-radius: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
 }
 #AnimeCard:hover {
-    border: 1px solid #ff6a00;
+    background: rgba(35, 52, 78, 130);
 }
 #CardPoster, #DetailPoster {
-    background: #282828;
+    background: #21314a;
+    border: 1px solid #333333;
     border-radius: 8px;
-    color: #bdbdbd;
+    color: #aebbd0;
+}
+#PartCard {
+    background: rgba(23, 34, 53, 160);
+    border: none;
+    border-radius: 8px;
+}
+#PartCard:hover {
+    background: rgba(45, 67, 98, 180);
+}
+#PartPoster {
+    background: #21314a;
+    border-radius: 6px;
+    color: #aebbd0;
+}
+#PartTitle {
+    color: #d7deea;
+    font-family: Outfit;
+    font-size: 12px;
+    font-weight: 600;
 }
 #CardTitle, #ListButton {
     font-family: Outfit;
     background: transparent;
     border: none;
-    color: #ffffff;
+    color: #e5ebf5;
     font-size: 15px;
     font-weight: 700;
 }
 #CardTitle:hover, #ListButton:hover {
-    color: #ff7a1a;
+    color: #a9c7ef;
 }
 #Muted, #Status {
-    color: #bdbdbd;
+    color: #aebbd0;
 }
 #FavoriteButton {
-    background: #282828;
-    border: 1px solid #555555;
+    background: #21314a;
+    border: 1px solid #49627f;
     border-radius: 8px;
-    color: #ff6a00;
+    color: #a9c7ef;
     font-size: 20px;
 }
 QPushButton {
-    background: #282828;
-    border: 1px solid #444444;
+    background: #1b2a40;
+    border: 1px solid #354c6a;
     border-radius: 8px;
     padding: 9px 14px;
 }
 QPushButton:hover {
-    background: #333333;
+    background: #263c59;
 }
 QComboBox, QLineEdit, QTextBrowser, QListWidget {
-    background: #202020;
-    border: 1px solid #444444;
+    background: #172235;
+    border: 1px solid #354c6a;
     border-radius: 8px;
     padding: 8px;
     color: #f4f7fb;

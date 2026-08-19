@@ -1,6 +1,7 @@
 # Contexto del proyecto Anime App
 
-## Objetivo
+- Home usa un único `QScrollArea` vertical con `Featured` y una fila horizontal persistente por género.
+- Cada sección de Home limita sus tarjetas y deduplica por `franchise_key`.
 
 Anime App es una aplicación de escritorio hecha con Python y PySide6. La versión visual actual se llama AniVerse y permite buscar, recomendar, guardar favoritos y gestionar listas usando una base de datos SQLite local. La aplicación tiene modo offline y un enriquecimiento online opcional con AniList al abrir una ficha.
 
@@ -20,6 +21,8 @@ anime-app/
     ├── anime.db
     ├── favorites.py
     ├── anilist.py
+    ├── image_manager.py
+    ├── catalog_extra.py
     ├── enrich_metadata.py
     ├── catalog.py
     ├── database.py
@@ -56,9 +59,9 @@ La ficha puede obtener online desde AniList una sinopsis, portada, tráiler y en
 
 Estado actual validado:
 
-- 200 animes en el catálogo.
-- 200 animes en SQLite.
-- 200 franquicias únicas.
+- 1000 animes en el catálogo.
+- 1000 animes en SQLite.
+- 1000 franquicias únicas.
 - 0 valores NULL en `rating`, `year`, `episodes` y `status`.
 - `synopsis`, `image_url` y `trailer_url` se mantienen sin completar por decisión del proyecto.
 
@@ -98,7 +101,7 @@ Los géneros visibles actualmente son:
 
 ### `database/catalog.py`
 
-Contiene `ANIME_CATALOG`, una lista de 200 diccionarios de anime.
+Contiene la base original de `ANIME_CATALOG` y extiende el catálogo con los 800 registros reales de `catalog_extra.py`.
 
 También contiene `COMPLETED_METADATA`, que completa los datos básicos de los 39 animes iniciales que estaban incompletos. Al cargar el módulo, esos valores se aplican al catálogo.
 
@@ -204,7 +207,7 @@ ocurre lo siguiente:
 
 1. Se crea la base SQLite si no existe.
 2. Se comprueba si hay animes.
-3. Si está vacía, se importa el catálogo de 200 títulos.
+3. Si está vacía, se importa el catálogo de 1000 títulos.
 4. Se abre la ventana PySide6.
 5. El usuario selecciona géneros y filtro de episodios.
 6. `main.py` llama a `get_all_animes_with_genres()`.
@@ -234,8 +237,14 @@ ocurre lo siguiente:
 - `assets/fonts/` contiene Outfit y DM Sans como fuentes locales.
 - `assets/icons/` contiene los iconos SVG consistentes de la interfaz.
 - El cargador de AniList deduplica peticiones simultáneas por `franchise`.
+- `ui/main_window.py` utiliza `database/image_manager.py` como servicio único para las imágenes.
 - Las tarjetas muestran `Loading...` mientras esperan y `Not available` si no hay imagen.
 - AniList prueba también `original_title` cuando el título mostrado no obtiene coincidencia.
+- Las fichas generan una descripción offline factual desde género, año, episodios y estado cuando no existe sinopsis local.
+- La búsqueda usa debounce y limita la renderización visible para evitar lag con 1000 animes.
+- La interfaz agrupa familias explícitamente confirmadas y conserva sus partes dentro de Details.
+- La ficha usa una sinopsis compacta y no muestra plataformas/streaming.
+- El selector de listas permite marcar varias listas y crear una nueva desde el diálogo.
 - `database/anime.db` nunca debe almacenar listas personales.
 
 ## Validaciones realizadas
@@ -250,8 +259,8 @@ python main.py
 
 Pruebas funcionales verificadas:
 
-- Catálogo: 200.
-- Base SQLite: 200.
+- Catálogo: 1000.
+- Base SQLite: 1000.
 - Isekai con todos los episodios: 36 resultados.
 - Acción con menos de 50 episodios: resultados disponibles.
 - Sin errores de diagnóstico en los módulos activos.

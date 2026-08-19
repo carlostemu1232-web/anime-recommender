@@ -36,6 +36,7 @@ TITLE_ALIASES = {
 
 _REQUEST_LOCK = threading.Lock()
 _ACTIVE_REQUESTS = {}
+_CACHE_LOCK = threading.RLock()
 
 QUERY = '''
 query ($search: String) {
@@ -83,9 +84,20 @@ def _load_cache():
 
     try:
 
-        with open(CACHE_FILE, 'r', encoding='utf-8') as file:
+        with _CACHE_LOCK:
 
-            return json.load(file)
+            with open(CACHE_FILE, 'r', encoding='utf-8') as file:
+
+                raw = file.read()
+
+            try:
+
+                return json.loads(raw)
+
+            except json.JSONDecodeError:
+
+                recovered, _ = json.JSONDecoder().raw_decode(raw)
+                return recovered if isinstance(recovered, dict) else {}
 
     except (OSError, json.JSONDecodeError):
 
@@ -96,14 +108,16 @@ def _save_cache(cache):
 
     temporary_file = f'{CACHE_FILE}.tmp'
 
-    with open(temporary_file, 'w', encoding='utf-8') as file:
+    with _CACHE_LOCK:
 
-        json.dump(cache, file, ensure_ascii=False, indent=2)
+        with open(temporary_file, 'w', encoding='utf-8') as file:
 
-    os.replace(
-        temporary_file,
-        CACHE_FILE
-    )
+            json.dump(cache, file, ensure_ascii=False, indent=2)
+
+        os.replace(
+            temporary_file,
+            CACHE_FILE
+        )
 
 
 def _normalize_title(title):

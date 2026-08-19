@@ -1,13 +1,17 @@
 import html
 import os
+import random
 
-from PySide6.QtCore import QObject, QSize, Qt, Signal
+from PySide6.QtCore import QObject, QTimer, QSize, Qt, Signal
 from PySide6.QtGui import QDesktopServices, QIcon, QPixmap
 from PySide6.QtWidgets import (
     QComboBox,
+    QButtonGroup,
+    QCheckBox,
     QDialog,
     QDialogButtonBox,
     QFrame,
+    QGraphicsBlurEffect,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -20,6 +24,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSizePolicy,
     QStackedWidget,
+    QStackedLayout,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
@@ -38,6 +43,8 @@ from database.favorites import (
     is_favorite,
     toggle_favorite
 )
+from database.image_manager import ImageManager
+from database.franchises import build_franchise_groups
 from database.lists import (
     add_anime_to_list,
     create_list,
@@ -94,11 +101,20 @@ def make_icon(name):
     return QIcon()
 
 
+PLACEHOLDER_PATH = os.path.join(
+    ASSET_FOLDER,
+    'images',
+    'poster_placeholder.svg'
+)
+
+
 class MediaBridge(QObject):
 
     ready = Signal(int, object)
     failed = Signal(int, object)
     image_ready = Signal(int, object)
+    image_loaded = Signal(int, str)
+    image_failed = Signal(int)
 
 
 class AnimeCard(QFrame):
@@ -116,12 +132,12 @@ class AnimeCard(QFrame):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setContentsMargins(6, 8, 6, 8)
         layout.setSpacing(7)
 
         poster = QLabel()
         poster.setObjectName('CardPoster')
-        poster.setFixedHeight(210)
+        poster.setFixedSize(160, 226)
         poster.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.poster = poster
         self.set_poster(
@@ -186,8 +202,8 @@ class AnimeCard(QFrame):
 
                 self.poster.setPixmap(
                     pixmap.scaled(
-                        140,
-                        205,
+                        154,
+                        220,
                         Qt.AspectRatioMode.KeepAspectRatio,
                         Qt.TransformationMode.SmoothTransformation
                     )
@@ -195,8 +211,93 @@ class AnimeCard(QFrame):
                 self.poster.setText('')
                 return
 
-        self.poster.setPixmap(QPixmap())
-        self.poster.setText('Loading...' if loading else 'Not available')
+        placeholder = QPixmap(PLACEHOLDER_PATH)
+
+        if not placeholder.isNull():
+
+            self.poster.setPixmap(
+                placeholder.scaled(
+                    154,
+                    220,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                )
+            )
+
+        self.poster.setText('')
+
+
+class PartCard(QFrame):
+
+    opened = Signal(int)
+
+    def __init__(self, anime, image_lookup):
+
+        super().__init__()
+        self.anime = anime
+        self.setObjectName('PartCard')
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setFixedSize(168, 286)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(7, 7, 7, 7)
+        layout.setSpacing(5)
+
+        self.poster = QLabel()
+        self.poster.setObjectName('PartPoster')
+        self.poster.setFixedSize(154, 196)
+        self.poster.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.set_poster(image_lookup(anime))
+        layout.addWidget(self.poster)
+
+        title = QLabel(anime['title'])
+        title.setObjectName('PartTitle')
+        title.setWordWrap(True)
+        title.setMaximumHeight(38)
+        layout.addWidget(title)
+
+        episodes = anime.get('episodes')
+        year = anime.get('year')
+        layout.addWidget(QLabel(
+            f"{episodes if episodes is not None else 'N/A'} episodes  ·  "
+            f"{year if year is not None else 'N/A'}"
+        ))
+
+    def set_poster(self, path):
+
+        if path and os.path.exists(path):
+
+            pixmap = QPixmap(path)
+
+            if not pixmap.isNull():
+
+                self.poster.setPixmap(
+                    pixmap.scaled(
+                        150,
+                        192,
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
+                )
+                return
+
+        placeholder = QPixmap(PLACEHOLDER_PATH)
+        self.poster.setPixmap(
+            placeholder.scaled(
+                150,
+                192,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            )
+        )
+
+    def mousePressEvent(self, event):
+
+        if event.button() == Qt.MouseButton.LeftButton:
+
+            self.opened.emit(self.anime['id'])
+
+        super().mousePressEvent(event)
 
 
 class AnimeWindow(QMainWindow):
@@ -207,15 +308,34 @@ class AnimeWindow(QMainWindow):
         self.setWindowTitle('AniVerse')
         self.resize(980, 850)
         self.setMinimumSize(700, 650)
-        self.animes = get_all_animes_with_genres()
+        self.anime_parts = get_all_animes_with_genres()
+        self.animes = build_franchise_groups(
+            self.anime_parts
+        )
         self.online_media = {}
         self.online_attempts = set()
         self.visible_cards = {}
+        self.home_section_expanded = {}
         self.current_anime_id = None
+        self.search_timer = QTimer(self)
+        self.search_timer.setSingleShot(True)
+        self.search_timer.setInterval(220)
+        self.search_timer.timeout.connect(self.render_search_results)
         self.media_bridge = MediaBridge()
         self.media_bridge.ready.connect(self.apply_online_media)
         self.media_bridge.failed.connect(self.online_error)
         self.media_bridge.image_ready.connect(self.apply_image_to_cards)
+        self.media_bridge.image_loaded.connect(self.apply_image_path)
+        self.media_bridge.image_failed.connect(self.apply_image_failure)
+        self.image_manager = ImageManager(
+            on_ready=lambda anime, path: self.media_bridge.image_loaded.emit(
+                anime['id'],
+                path
+            ),
+            on_failed=lambda anime, error: self.media_bridge.image_failed.emit(
+                anime['id']
+            )
+        )
         self.build_ui()
         self.show_home()
 
@@ -224,32 +344,72 @@ class AnimeWindow(QMainWindow):
         central = QWidget()
         central.setObjectName('Shell')
         self.setCentralWidget(central)
-        shell = QVBoxLayout(central)
-        shell.setContentsMargins(22, 18, 22, 12)
-        shell.setSpacing(12)
+        shell = QHBoxLayout(central)
+        shell.setContentsMargins(0, 0, 0, 0)
+        shell.setSpacing(0)
 
-        header = QHBoxLayout()
+        sidebar = QFrame()
+        sidebar.setObjectName('Sidebar')
+        sidebar.setFixedWidth(150)
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(10, 18, 10, 14)
+        sidebar_layout.setSpacing(8)
+
         brand = QLabel('AniVerse')
         brand.setObjectName('Brand')
-        header.addWidget(brand)
-        header.addStretch()
-        menu_button = QPushButton()
-        menu_button.setIcon(make_icon('menu'))
-        menu_button.setIconSize(QSize(22, 22))
-        menu_button.setFixedSize(40, 36)
-        menu_button.setToolTip('Open menu')
-        menu_button.clicked.connect(self.show_settings)
-        header.addWidget(menu_button)
+        brand.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        sidebar_layout.addWidget(brand)
+        sidebar_layout.addSpacing(18)
+
+        nav_items = [
+            ('home', 'Home', self.show_home),
+            ('search', 'Explore', self.show_search),
+            ('wand', 'Random', self.show_random),
+            ('favorites', 'Favorites', self.show_favorites),
+            ('lists', 'Lists', self.show_lists),
+            ('settings', 'Settings', self.show_settings)
+        ]
+
+        for icon_name, label, handler in nav_items:
+
+            button = QPushButton(label)
+            button.setObjectName('SideNavButton')
+            button.setIcon(make_icon(icon_name))
+            button.setIconSize(QSize(20, 20))
+            button.setToolTip(label)
+            button.clicked.connect(handler)
+            sidebar_layout.addWidget(button)
+
+        sidebar_layout.addStretch()
+        shell.addWidget(sidebar)
+
+        content_shell = QVBoxLayout()
+        content_shell.setContentsMargins(22, 14, 22, 14)
+        content_shell.setSpacing(12)
+
+        header = QHBoxLayout()
+        self.top_search = QLineEdit()
+        self.top_search.setObjectName('TopSearch')
+        self.top_search.setPlaceholderText('Search anime...')
+        self.top_search.setClearButtonEnabled(True)
+        self.top_search.textChanged.connect(self.search_from_header)
+        header.addWidget(self.top_search, 1)
         self.connection_label = QLabel('● Local catalog')
         self.connection_label.setObjectName('Muted')
         header.addWidget(self.connection_label)
-        shell.addLayout(header)
+        avatar = QLabel('AV')
+        avatar.setObjectName('Avatar')
+        avatar.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        avatar.setFixedSize(34, 34)
+        header.addWidget(avatar)
+        content_shell.addLayout(header)
 
         self.pages = QStackedWidget()
-        shell.addWidget(self.pages, 1)
+        content_shell.addWidget(self.pages, 1)
 
         self.home_page = self.build_home_page()
         self.search_page = self.build_search_page()
+        self.random_page = self.build_random_page()
         self.favorites_page = QWidget()
         self.lists_page = QWidget()
         self.settings_page = self.build_settings_page()
@@ -258,6 +418,7 @@ class AnimeWindow(QMainWindow):
         for page in (
             self.home_page,
             self.search_page,
+            self.random_page,
             self.favorites_page,
             self.lists_page,
             self.settings_page,
@@ -266,79 +427,46 @@ class AnimeWindow(QMainWindow):
 
             self.pages.addWidget(page)
 
-        navigation = QFrame()
-        navigation.setObjectName('BottomNav')
-        nav_layout = QHBoxLayout(navigation)
-        nav_layout.setContentsMargins(4, 4, 4, 4)
+        shell.addLayout(content_shell, 1)
 
-        items = [
-            ('🏠', 'Home', self.show_home),
-            ('🔎', 'Search', self.show_search),
-            ('♥', 'Favorites', self.show_favorites),
-            ('📚', 'Lists', self.show_lists),
-            ('⚙', 'Settings', self.show_settings)
-        ]
+    def search_from_header(self, text):
 
-        for icon, label, handler in items:
+        if text and self.pages.currentWidget() is not self.search_page:
 
-            icon_name = {
-                'Home': 'home',
-                'Search': 'search',
-                'Favorites': 'favorites',
-                'Lists': 'lists',
-                'Settings': 'settings'
-            }[label]
-            button = QPushButton(label)
-            button.setIcon(make_icon(icon_name))
-            button.setIconSize(QSize(22, 22))
-            button.setObjectName('NavButton')
-            button.setToolTip(label)
-            button.clicked.connect(handler)
-            nav_layout.addWidget(button, 1)
+            self.show_search()
 
-        shell.addWidget(navigation)
+        if hasattr(self, 'search_input') and self.search_input.text() != text:
+
+            self.search_input.setText(text)
 
     def build_home_page(self):
 
         page = QWidget()
-        layout = QVBoxLayout(page)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(14)
-
-        heading = QLabel('Principal')
-        heading.setObjectName('PrincipalTitle')
-        heading.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(heading)
-
-        recommendations_title = QLabel('Recommendations')
-        recommendations_title.setObjectName('SectionTitle')
-        layout.addWidget(recommendations_title)
+        page_layout = QVBoxLayout(page)
+        page_layout.setContentsMargins(0, 0, 0, 0)
 
         self.home_scroll = QScrollArea()
         self.home_scroll.setWidgetResizable(True)
+        self.home_scroll.setFrameShape(QFrame.Shape.NoFrame)
         self.home_scroll.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAsNeeded
-        )
-        self.home_scroll.setVerticalScrollBarPolicy(
             Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         )
-        self.home_scroll.setFrameShape(QFrame.Shape.NoFrame)
 
         home_content = QWidget()
-        self.home_row = QHBoxLayout(home_content)
-        self.home_row.setContentsMargins(4, 4, 10, 10)
-        self.home_row.setSpacing(14)
+        self.home_content_layout = QVBoxLayout(home_content)
+        self.home_content_layout.setContentsMargins(4, 4, 10, 16)
+        self.home_content_layout.setSpacing(22)
         self.home_scroll.setWidget(home_content)
-        layout.addWidget(self.home_scroll)
-        layout.addStretch()
+        page_layout.addWidget(self.home_scroll)
 
-        self.render_home_recommendations()
+        self.render_home_sections()
         return page
 
-    def render_home_recommendations(self):
+    def render_home_sections(self):
 
-        self.clear_layout(self.home_row)
+        self.clear_layout(self.home_content_layout)
         self.visible_cards = {}
+        self.home_section_expanded = {}
 
         recommendations = sorted(
             self.animes,
@@ -349,20 +477,131 @@ class AnimeWindow(QMainWindow):
             reverse=True
         )[:12]
 
-        for anime in recommendations:
+        self.add_home_section(
+            'Featured',
+            recommendations
+        )
+
+        for genre in GENRES[1:]:
+
+            genre_animes = [
+                anime
+                for anime in self.animes
+                if genre in anime.get('genres', [])
+            ]
+            genre_animes.sort(
+                key=lambda anime: (
+                    anime.get('rating') or 0,
+                    anime.get('year') or 0
+                ),
+                reverse=True
+            )
+            self.add_home_section(
+                genre.title(),
+                genre_animes[:12]
+            )
+
+        self.home_content_layout.addStretch()
+
+    def add_home_section(self, title, animes):
+
+        section = QFrame()
+        section.setObjectName('HomeSection')
+        section_layout = QVBoxLayout(section)
+        section_layout.setContentsMargins(12, 12, 12, 12)
+        section_layout.setSpacing(12)
+
+        header = QHBoxLayout()
+        section_icons = {
+            'Featured': '✦',
+            'Action': '⚔',
+            'Fantasy': '✧',
+            'Comedy': '☻',
+            'Drama': '◈',
+            'School': '⌘',
+            'Adventure': '➜',
+            'Romance': '♡',
+            'Isekai': '◉'
+        }
+        heading = QLabel(
+            f"{section_icons.get(title, '•')}  {title}"
+        )
+        heading.setObjectName('SectionTitle')
+        header.addWidget(heading)
+        header.addStretch()
+
+        more_button = QPushButton('See more')
+        more_button.setObjectName('SeeMoreButton')
+        more_button.clicked.connect(
+            lambda: self.expand_home_section(title, animes, section)
+        )
+        header.addWidget(more_button)
+        section_layout.addLayout(header)
+
+        cards_grid = QGridLayout()
+        cards_grid.setContentsMargins(2, 2, 2, 2)
+        cards_grid.setHorizontalSpacing(12)
+        cards_grid.setVerticalSpacing(12)
+        section_layout.addLayout(cards_grid)
+
+        section.setProperty('homeTitle', title)
+        section.setProperty('homeAnimeCount', len(animes))
+        section._cards_grid = cards_grid
+        section._more_button = more_button
+
+        self.populate_home_grid(
+            cards_grid,
+            animes[:5]
+        )
+        self.home_content_layout.addWidget(section)
+        self.prefetch_media(animes[:5])
+
+    def populate_home_grid(self, grid, animes):
+
+        for index, anime in enumerate(animes):
 
             card = AnimeCard(anime, self.image_lookup)
-            card.setFixedWidth(190)
+            card.setFixedWidth(178)
             self.visible_cards.setdefault(
                 anime['id'],
                 []
             ).append(card)
             card.opened.connect(self.show_detail)
             card.favorite_changed.connect(self.refresh_visible_cards)
-            self.home_row.addWidget(card)
+            grid.addWidget(card, 0, index)
 
-        self.home_row.addStretch()
-        self.prefetch_media(recommendations)
+    def expand_home_section(self, title, animes, section):
+
+        expanded = self.home_section_expanded.get(title, False)
+        self.home_section_expanded[title] = not expanded
+        grid = section._cards_grid
+
+        while grid.count():
+
+            item = grid.takeAt(0)
+
+            if item.widget():
+
+                item.widget().deleteLater()
+
+        visible_animes = animes if not expanded else animes[:5]
+        section._more_button.setText(
+            'Show less' if not expanded else 'See more'
+        )
+
+        for index, anime in enumerate(visible_animes):
+
+            card = AnimeCard(anime, self.image_lookup)
+            card.setFixedWidth(178)
+            self.visible_cards.setdefault(
+                anime['id'],
+                []
+            ).append(card)
+            card.opened.connect(self.show_detail)
+            card.favorite_changed.connect(self.refresh_visible_cards)
+            grid.addWidget(card, index // 5, index % 5)
+
+        self.prefetch_media(visible_animes)
 
     def build_search_page(self):
 
@@ -375,13 +614,172 @@ class AnimeWindow(QMainWindow):
 
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText('Search by title or original title...')
-        self.search_input.textChanged.connect(self.render_search_results)
+        self.search_input.setVisible(True)
+        self.search_input.textChanged.connect(
+            lambda: self.search_timer.start()
+        )
         layout.addWidget(self.search_input)
 
         self.search_scroll = self.create_scroll()
         layout.addWidget(self.search_scroll, 1)
         self.search_grid = self.search_scroll.widget().layout()
         return page
+
+    def build_random_page(self):
+
+        page = QWidget()
+        page_layout = QVBoxLayout(page)
+        page_layout.setContentsMargins(0, 0, 0, 0)
+
+        page_scroll = QScrollArea()
+        page_scroll.setWidgetResizable(True)
+        page_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        page_scroll.setHorizontalScrollBarPolicy(
+            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        )
+        content = QWidget()
+        layout = QVBoxLayout(content)
+        layout.setContentsMargins(4, 4, 10, 18)
+        layout.setSpacing(18)
+
+        heading = QLabel('Random discovery')
+        heading.setObjectName('PageTitle')
+        layout.addWidget(heading)
+
+        intro = QLabel('Choose one genre and let AniVerse surprise you.')
+        intro.setObjectName('Muted')
+        layout.addWidget(intro)
+
+        genre_panel = QFrame()
+        genre_panel.setObjectName('RandomPanel')
+        genre_layout = QGridLayout(genre_panel)
+        genre_layout.setContentsMargins(14, 14, 14, 14)
+        genre_layout.setHorizontalSpacing(10)
+        genre_layout.setVerticalSpacing(10)
+        self.random_group = QButtonGroup(self)
+        self.random_group.setExclusive(True)
+        self.random_genre_buttons = []
+
+        for index, genre in enumerate(GENRES[1:]):
+
+            button = QPushButton(genre.title())
+            button.setCheckable(True)
+            button.setObjectName('GenreChoice')
+            self.random_group.addButton(button)
+            self.random_genre_buttons.append(button)
+            genre_layout.addWidget(button, index // 3, index % 3)
+
+        self.random_genre_buttons[0].setChecked(True)
+        layout.addWidget(genre_panel)
+
+        popularity_label = QLabel('Popularity')
+        popularity_label.setObjectName('SectionTitle')
+        layout.addWidget(popularity_label)
+        popularity_panel = QFrame()
+        popularity_panel.setObjectName('RandomPanel')
+        popularity_layout = QGridLayout(popularity_panel)
+        popularity_layout.setContentsMargins(12, 12, 12, 12)
+        popularity_layout.setHorizontalSpacing(10)
+        self.popularity_group = QButtonGroup(self)
+        self.popularity_group.setExclusive(True)
+
+        for index, label in enumerate((
+            'Any popularity',
+            'Very popular',
+            'Popular',
+            'Hidden gems'
+        )):
+
+            button = QPushButton(label)
+            button.setCheckable(True)
+            button.setObjectName('GenreChoice')
+            self.popularity_group.addButton(button)
+            popularity_layout.addWidget(button, 0, index)
+
+            if index == 0:
+
+                button.setChecked(True)
+
+        layout.addWidget(popularity_panel)
+
+        search_button = QPushButton('Search randomly')
+        search_button.setObjectName('PrimaryButton')
+        search_button.setIcon(make_icon('wand'))
+        search_button.clicked.connect(self.random_discovery)
+        layout.addWidget(search_button, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        results_title = QLabel('Random results')
+        results_title.setObjectName('SectionTitle')
+        layout.addWidget(results_title)
+        random_results = QFrame()
+        random_results.setObjectName('RandomResults')
+        self.random_grid = QGridLayout(random_results)
+        self.random_grid.setContentsMargins(4, 4, 4, 4)
+        self.random_grid.setHorizontalSpacing(12)
+        self.random_grid.setVerticalSpacing(12)
+        layout.addWidget(random_results)
+        layout.addStretch()
+        page_scroll.setWidget(content)
+        page_layout.addWidget(page_scroll)
+        self.random_discovery()
+        return page
+
+    def random_discovery(self):
+
+        selected_button = self.random_group.checkedButton()
+        selected = selected_button.text().casefold() if selected_button else 'action'
+        primary_pool = [
+            anime
+            for anime in self.animes
+            if anime.get('primary_genre') == selected
+        ]
+        secondary_pool = [
+            anime
+            for anime in self.animes
+            if selected in anime.get('genres', [])
+            and anime not in primary_pool
+        ]
+        popularity_button = self.popularity_group.checkedButton()
+        popularity = (
+            popularity_button.text()
+            if popularity_button
+            else 'Any popularity'
+        )
+
+        pool = primary_pool + secondary_pool
+
+        if popularity != 'Any popularity':
+
+            pool = [
+                anime
+                for anime in pool
+                if self.popularity_category(anime) == popularity
+            ]
+
+        random.shuffle(pool)
+        selected_results = pool[:5]
+        self.render_grid(
+            self.random_grid,
+            selected_results
+        )
+        self.prefetch_media(selected_results)
+
+    @staticmethod
+    def popularity_category(anime):
+
+        rating = anime.get('average_rating') or anime.get('rating') or 0
+        parts = anime.get('part_count', 1)
+        episodes = anime.get('known_episodes', 0)
+
+        if rating >= 8.5 or parts >= 3 or episodes >= 100:
+
+            return 'Very popular'
+
+        if rating >= 7.5 or parts >= 2:
+
+            return 'Popular'
+
+        return 'Hidden gems'
 
     def build_settings_page(self):
 
@@ -392,7 +790,7 @@ class AnimeWindow(QMainWindow):
         title.setObjectName('PageTitle')
         layout.addWidget(title)
         layout.addWidget(QLabel('AniVerse uses the local catalog first.'))
-        layout.addWidget(QLabel('AniList is queried only when opening a detail page and results are cached.'))
+        layout.addWidget(QLabel('The catalog and descriptions work offline. Images are enriched online when available.'))
         layout.addStretch()
         return page
 
@@ -427,6 +825,20 @@ class AnimeWindow(QMainWindow):
         if not media:
 
             media = get_cached_media(anime['franchise']) or {}
+
+        path = self.image_manager.get_local_path(anime)
+
+        if path:
+
+            return path
+
+        for part in anime.get('parts', []):
+
+            path = self.image_manager.get_local_path(part)
+
+            if path:
+
+                return path
 
         return media.get('local_image')
 
@@ -469,36 +881,18 @@ class AnimeWindow(QMainWindow):
 
     def render_search_results(self):
 
-        results = search_animes(self.search_input.text())
-        self.render_grid(self.search_grid, results)
-        self.prefetch_media(results[:12])
+        results = build_franchise_groups(
+            search_animes(self.search_input.text())
+        )
+        visible_results = results[:60]
+        self.render_grid(self.search_grid, visible_results)
+        self.prefetch_media(visible_results[:12])
 
     def prefetch_media(self, animes):
 
         for anime in animes:
 
-            if anime['id'] in self.online_attempts:
-
-                continue
-
-            if self.image_lookup(anime):
-
-                continue
-
-            self.online_attempts.add(anime['id'])
-            get_media_async(
-                anime['title'],
-                anime['franchise'],
-                lambda media, anime_id=anime['id']: self.media_bridge.image_ready.emit(
-                    anime_id,
-                    media
-                ),
-                lambda error, anime_id=anime['id']: self.media_bridge.image_ready.emit(
-                    anime_id,
-                    None
-                ),
-                anime.get('original_title')
-            )
+            self.image_manager.request(anime)
 
     def apply_image_to_cards(self, anime_id, media):
 
@@ -522,6 +916,29 @@ class AnimeWindow(QMainWindow):
                 loading=False
             )
 
+    def apply_image_path(self, anime_id, path):
+
+        self.online_media.setdefault(
+            anime_id,
+            {}
+        )['local_image'] = path
+
+        for card in self.visible_cards.get(anime_id, []):
+
+            if isinstance(card, PartCard):
+                card.set_poster(path)
+            else:
+                card.set_poster(path, loading=False)
+
+    def apply_image_failure(self, anime_id):
+
+        for card in self.visible_cards.get(anime_id, []):
+
+            if isinstance(card, PartCard):
+                card.set_poster(None)
+            else:
+                card.set_poster(None, loading=False)
+
     def render_favorites(self):
 
         page_layout = self.favorites_page.layout()
@@ -536,7 +953,12 @@ class AnimeWindow(QMainWindow):
         title.setObjectName('PageTitle')
         page_layout.addWidget(title)
         favorite_ids = set(get_favorite_ids())
-        favorites = [anime for anime in self.animes if anime['id'] in favorite_ids]
+        favorites = [
+            anime
+            for anime in self.animes
+            if anime['id'] in favorite_ids
+            or any(part['id'] in favorite_ids for part in anime.get('parts', []))
+        ]
         scroll = self.create_scroll()
         page_layout.addWidget(scroll, 1)
         self.render_grid(scroll.widget().layout(), favorites)
@@ -597,7 +1019,12 @@ class AnimeWindow(QMainWindow):
     def open_list(self, list_id):
 
         ids = set(get_list_anime_ids(list_id))
-        animes = [anime for anime in self.animes if anime['id'] in ids]
+        animes = [
+            anime
+            for anime in self.animes
+            if anime['id'] in ids
+            or any(part['id'] in ids for part in anime.get('parts', []))
+        ]
         page_layout = self.lists_page.layout()
         self.clear_layout(page_layout)
         back = QPushButton('Back to lists')
@@ -664,6 +1091,11 @@ class AnimeWindow(QMainWindow):
         self.pages.setCurrentWidget(self.search_page)
         self.connection_label.setText('● Local search')
 
+    def show_random(self):
+
+        self.pages.setCurrentWidget(self.random_page)
+        self.connection_label.setText('● Local random discovery')
+
     def show_favorites(self):
 
         self.render_favorites()
@@ -680,7 +1112,18 @@ class AnimeWindow(QMainWindow):
 
     def show_detail(self, anime_id, return_page=None):
 
-        anime = get_anime_with_genres(anime_id)
+        anime = next(
+            (
+                item
+                for item in self.animes
+                if item['id'] == anime_id
+                or any(
+                    part['id'] == anime_id
+                    for part in item.get('parts', [])
+                )
+            ),
+            None
+        )
 
         if not anime:
 
@@ -712,6 +1155,8 @@ class AnimeWindow(QMainWindow):
 
     def render_detail(self, anime, online):
 
+        """
+
         page_layout = self.detail_page.layout()
 
         if page_layout is None:
@@ -728,6 +1173,7 @@ class AnimeWindow(QMainWindow):
         page_layout.addWidget(back, alignment=Qt.AlignmentFlag.AlignLeft)
 
         profile = QFrame()
+        profile.setObjectName('DetailProfile')
         profile_layout = QHBoxLayout(profile)
         poster = QLabel()
         poster.setObjectName('DetailPoster')
@@ -764,9 +1210,15 @@ class AnimeWindow(QMainWindow):
             ('Original', anime.get('original_title')),
             ('Rating', anime.get('rating')),
             ('Year', anime.get('year')),
-            ('Episodes', anime.get('episodes')),
+            (
+                'Episodes',
+                f"{anime.get('known_episodes')}+"
+                if not anime.get('episodes_complete')
+                else anime.get('known_episodes')
+            ),
             ('Status', anime.get('status')),
-            ('Genres', ', '.join(anime.get('genres', [])))
+            ('Genres', ', '.join(anime.get('genres', []))),
+            ('Parts', anime.get('part_count'))
         ]
 
         for label, value in fields:
@@ -778,68 +1230,449 @@ class AnimeWindow(QMainWindow):
             else 'Add to favorites'
         )
         favorite.setIcon(make_icon(
+            self.clear_layout(page_layout)
+
+            back = QPushButton('Back')
+            back.setIcon(make_icon('back'))
+            back.clicked.connect(
+                lambda: self.pages.setCurrentWidget(self.detail_return_page)
+            )
+            page_layout.addWidget(back, alignment=Qt.AlignmentFlag.AlignLeft)
+
+            hero = QFrame()
+            hero.setObjectName('DetailHero')
+            hero_stack = QStackedLayout(hero)
+            hero_stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
+
+            background = QLabel()
+            background.setObjectName('DetailBackdrop')
+            background.setScaledContents(True)
+            background_path = self.image_lookup(anime)
+
+            if background_path:
+
+                background.setPixmap(QPixmap(background_path))
+                blur = QGraphicsBlurEffect(background)
+                blur.setBlurRadius(28)
+                background.setGraphicsEffect(blur)
+
+            hero_stack.addWidget(background)
+
+            overlay = QFrame()
+            overlay.setObjectName('DetailOverlay')
+            hero_stack.addWidget(overlay)
+
+            hero_content = QHBoxLayout(overlay)
+            hero_content.setContentsMargins(20, 18, 20, 18)
+            hero_content.setSpacing(18)
+
+            poster = QLabel()
+            poster.setObjectName('DetailPoster')
+            poster.setFixedSize(220, 300)
+            poster.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            poster_path = self.image_lookup(anime)
+
+            if poster_path:
+
+                pixmap = QPixmap(poster_path)
+
+                if not pixmap.isNull():
+
+                    poster.setPixmap(
+                        pixmap.scaled(
+                            210,
+                            290,
+                            Qt.AspectRatioMode.KeepAspectRatio,
+                            Qt.TransformationMode.SmoothTransformation
+                        )
+                    )
+
+            if poster.pixmap() is None or poster.pixmap().isNull():
+
+                poster.setText('No image available')
+
+            hero_content.addWidget(poster)
+
+            info = QVBoxLayout()
+            info.setSpacing(8)
+            title = QLabel(anime['title'])
+            title.setObjectName('DetailTitle')
+            title.setWordWrap(True)
+            info.addWidget(title)
+
+            rating = self.value(anime.get('rating'))
+            year = self.value(anime.get('year'))
+            status = self.value(anime.get('status'))
+            info.addWidget(QLabel(f'★ {rating}   ·   {year}   ·   {status}'))
+            info.addWidget(QLabel(', '.join(anime.get('genres', []))))
+
+            episode_value = (
+                f"{anime.get('known_episodes')}+"
+                if not anime.get('episodes_complete')
+                else anime.get('known_episodes')
+            )
+            info.addWidget(QLabel(
+                f"{anime.get('part_count', 1)} parts   ·   "
+                f"{self.value(episode_value)} episodes"
+            ))
+
+            actions = QHBoxLayout()
+            favorite = QPushButton()
+            favorite.setIcon(make_icon(
+                'heart_filled' if is_favorite(anime['id']) else 'heart'
+            ))
+            favorite.setObjectName('FavoriteButton')
+            favorite.setToolTip(
+                'Remove from favorites' if is_favorite(anime['id'])
+                else 'Add to favorites'
+            )
+            favorite.setFixedSize(46, 42)
+            favorite.clicked.connect(
+                lambda: self.toggle_detail_favorite(anime['id'])
+            )
+            actions.addWidget(favorite)
+
+            list_button = QPushButton('Add to lists')
+            list_button.setIcon(make_icon('add'))
+            list_button.clicked.connect(
+                lambda: self.open_list_selector(anime['id'])
+            )
+            actions.addWidget(list_button)
+            actions.addStretch()
+            info.addLayout(actions)
+            info.addStretch()
+            hero_content.addLayout(info, 1)
+            page_layout.addWidget(hero)
+
+            lower = QHBoxLayout()
+            lower.setSpacing(14)
+
+            stats = QFrame()
+            stats.setObjectName('DetailStats')
+            stats_layout = QVBoxLayout(stats)
+            stats_layout.addWidget(QLabel('Franchise overview'))
+            stats_layout.addWidget(QLabel(f"Parts: {anime.get('part_count', 1)}"))
+            stats_layout.addWidget(QLabel(f"Known episodes: {self.value(episode_value)}"))
+            stats_layout.addWidget(QLabel(f"Start year: {year}"))
+            stats_layout.addWidget(QLabel(f"Status: {status}"))
+            stats_layout.addStretch()
+            lower.addWidget(stats, 0)
+
+            biography = QFrame()
+            biography.setObjectName('BiographyPanel')
+            bio_layout = QVBoxLayout(biography)
+            bio_layout.addWidget(QLabel('Biography'))
+            description = QLabel(self.value(self.offline_description(anime)))
+            description.setWordWrap(True)
+            description.setMaximumHeight(118)
+            bio_layout.addWidget(description)
+            bio_layout.addStretch()
+            lower.addWidget(biography, 1)
+            page_layout.addLayout(lower)
+
+            parts_title = QLabel('Seasons, OVAs and Movies')
+            parts_title.setObjectName('SectionTitle')
+            page_layout.addWidget(parts_title)
+            parts_scroll = QScrollArea()
+            parts_scroll.setWidgetResizable(True)
+            parts_scroll.setHorizontalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAsNeeded
+            )
+            parts_scroll.setVerticalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            )
+            parts_scroll.setFrameShape(QFrame.Shape.NoFrame)
+            parts_content = QWidget()
+            parts_row = QHBoxLayout(parts_content)
+            parts_row.setContentsMargins(2, 2, 2, 8)
+            parts_row.setSpacing(10)
+
+            for part in anime.get('parts', []):
+
+                part_card = AnimeCard(part, self.image_lookup)
+                part_card.setFixedWidth(150)
+                part_card.opened.connect(
+                    lambda part_id: self.show_detail(
+                        part_id,
+                        self.detail_page
+                    )
+                )
+                part_card.favorite_changed.connect(self.refresh_visible_cards)
+                self.visible_cards.setdefault(part['id'], []).append(part_card)
+                parts_row.addWidget(part_card)
+                self.image_manager.request(part)
+
+            parts_row.addStretch()
+            parts_scroll.setWidget(parts_content)
+            parts_scroll.setMaximumHeight(300)
+            page_layout.addWidget(parts_scroll)
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+
+            return
+
+        selected = {
+            list_id
+            for list_id, check in checks
+            if check.isChecked()
+        }
+        existing = current_ids
+
+        for list_id in selected - existing:
+
+            add_anime_to_list(list_id, anime_id)
+
+        from database.lists import remove_anime_from_list
+
+        for list_id in existing - selected:
+
+            remove_anime_from_list(list_id, anime_id)
+
+        self.show_detail(anime_id, self.detail_return_page)
+
+    def create_list_from_selector(self, dialog, anime_id):
+
+        name, accepted = QInputDialog.getText(
+            dialog,
+            'Create list',
+            'Name:'
+        )
+
+        if accepted and create_list(name):
+
+            dialog.done(QDialog.DialogCode.Accepted)
+            self.open_list_selector(anime_id)
+
+        """
+
+    def render_detail(self, anime, online):
+
+        root_layout = self.detail_page.layout()
+
+        if root_layout is None:
+
+            root_layout = QVBoxLayout(self.detail_page)
+            root_layout.setContentsMargins(0, 0, 0, 0)
+            self.detail_scroll = QScrollArea()
+            self.detail_scroll.setWidgetResizable(True)
+            self.detail_scroll.setFrameShape(QFrame.Shape.NoFrame)
+            self.detail_scroll.setHorizontalScrollBarPolicy(
+                Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            )
+            detail_content = QWidget()
+            self.detail_content_layout = QVBoxLayout(detail_content)
+            self.detail_content_layout.setContentsMargins(4, 4, 10, 18)
+            self.detail_content_layout.setSpacing(14)
+            self.detail_scroll.setWidget(detail_content)
+            root_layout.addWidget(self.detail_scroll)
+
+        page_layout = self.detail_content_layout
+
+        self.clear_layout(page_layout)
+
+        back = QPushButton('Back')
+        back.setIcon(make_icon('back'))
+        back.clicked.connect(
+            lambda: self.pages.setCurrentWidget(self.detail_return_page)
+        )
+        page_layout.addWidget(back, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        hero = QFrame()
+        hero.setObjectName('DetailHero')
+        stack = QStackedLayout(hero)
+        stack.setStackingMode(QStackedLayout.StackingMode.StackAll)
+
+        backdrop = QLabel()
+        backdrop.setObjectName('DetailBackdrop')
+        backdrop.setScaledContents(True)
+        path = self.image_lookup(anime)
+
+        if path:
+
+            backdrop.setPixmap(QPixmap(path))
+            blur = QGraphicsBlurEffect(backdrop)
+            blur.setBlurRadius(28)
+            backdrop.setGraphicsEffect(blur)
+
+        stack.addWidget(backdrop)
+
+        overlay = QFrame()
+        overlay.setObjectName('DetailOverlay')
+        overlay.setAttribute(
+            Qt.WidgetAttribute.WA_TranslucentBackground,
+            True
+        )
+        stack.addWidget(overlay)
+        backdrop.lower()
+        overlay.raise_()
+        hero_layout = QHBoxLayout(overlay)
+        hero_layout.setContentsMargins(20, 18, 20, 18)
+        hero_layout.setSpacing(18)
+
+        poster = QLabel()
+        poster.setObjectName('DetailPoster')
+        poster.setFixedSize(220, 300)
+        poster.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        if path:
+
+            pixmap = QPixmap(path)
+
+            if not pixmap.isNull():
+
+                poster.setPixmap(
+                    pixmap.scaled(
+                        210,
+                        290,
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                        Qt.TransformationMode.SmoothTransformation
+                    )
+                )
+
+        if poster.pixmap() is None or poster.pixmap().isNull():
+
+            poster.setText('No image available')
+
+        hero_layout.addWidget(poster)
+
+        info = QVBoxLayout()
+        title = QLabel(anime['title'])
+        title.setObjectName('DetailTitle')
+        title.setWordWrap(True)
+        info.addWidget(title)
+
+        rating = self.value(anime.get('rating'))
+        year = self.value(anime.get('year'))
+        status = self.value(anime.get('status'))
+        info.addWidget(QLabel(f'★ {rating}   ·   {year}   ·   {status}'))
+        info.addWidget(QLabel(', '.join(anime.get('genres', []))))
+
+        episode_value = anime.get('known_episodes', anime.get('episodes'))
+        if not anime.get('episodes_complete', True):
+            episode_value = f'{episode_value}+'
+
+        info.addWidget(QLabel(
+            f"{anime.get('part_count', 1)} parts   ·   "
+            f"{self.value(episode_value)} episodes"
+        ))
+
+        actions = QHBoxLayout()
+        favorite = QPushButton()
+        favorite.setIcon(make_icon(
             'heart_filled' if is_favorite(anime['id']) else 'heart'
         ))
+        favorite.setObjectName('FavoriteButton')
+        favorite.setToolTip(
+            'Remove from favorites' if is_favorite(anime['id'])
+            else 'Add to favorites'
+        )
+        favorite.setFixedSize(46, 42)
         favorite.clicked.connect(
             lambda: self.toggle_detail_favorite(anime['id'])
         )
-        info.addWidget(favorite)
+        actions.addWidget(favorite)
 
-        list_row = QHBoxLayout()
-        list_box = QComboBox()
-        list_box.addItem('Add to a list...', None)
+        list_button = QPushButton('Add to lists')
+        list_button.setIcon(make_icon('add'))
+        list_button.clicked.connect(
+            lambda: self.open_list_selector(anime['id'])
+        )
+        actions.addWidget(list_button)
+        actions.addStretch()
+        info.addLayout(actions)
+        info.addStretch()
+        hero_layout.addLayout(info, 1)
+        page_layout.addWidget(hero)
+
+        lower = QHBoxLayout()
+        stats = QFrame()
+        stats.setObjectName('DetailStats')
+        stats_layout = QVBoxLayout(stats)
+        stats_layout.addWidget(QLabel('Franchise overview'))
+        stats_layout.addWidget(QLabel(f"Parts: {anime.get('part_count', 1)}"))
+        stats_layout.addWidget(QLabel(f"Known episodes: {self.value(episode_value)}"))
+        stats_layout.addWidget(QLabel(f'Start year: {year}'))
+        stats_layout.addWidget(QLabel(f'Status: {status}'))
+        stats_layout.addStretch()
+        lower.addWidget(stats)
+
+        biography = QFrame()
+        biography.setObjectName('BiographyPanel')
+        bio_layout = QVBoxLayout(biography)
+        bio_layout.addWidget(QLabel('Biography'))
+        description = QLabel(self.value(self.offline_description(anime)))
+        description.setWordWrap(True)
+        description.setMaximumHeight(118)
+        bio_layout.addWidget(description)
+        bio_layout.addStretch()
+        lower.addWidget(biography, 1)
+        page_layout.addLayout(lower)
+
+        parts_title = QLabel('Seasons, OVAs and Movies')
+        parts_title.setObjectName('SectionTitle')
+        page_layout.addWidget(parts_title)
+        parts_panel = QFrame()
+        parts_panel.setObjectName('PartsPanel')
+        parts_grid = QGridLayout(parts_panel)
+        parts_grid.setContentsMargins(10, 10, 10, 10)
+        parts_grid.setHorizontalSpacing(10)
+        parts_grid.setVerticalSpacing(12)
+
+        for index, part in enumerate(anime.get('parts', [])):
+
+            part_card = PartCard(part, self.image_lookup)
+            part_card.opened.connect(
+                lambda part_id: self.show_detail(
+                    part_id,
+                    self.detail_return_page
+                )
+            )
+            parts_grid.addWidget(part_card, index // 6, index % 6)
+            self.image_manager.request(part)
+
+        page_layout.addWidget(parts_panel)
+
+    def open_list_selector(self, anime_id):
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Add to lists')
+        dialog.setMinimumWidth(320)
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(QLabel('Select lists for this anime.'))
+        current_ids = {item['id'] for item in get_anime_lists(anime_id)}
+        checks = []
 
         for item in get_lists():
 
-            list_box.addItem(item['name'], item['id'])
+            check = QCheckBox(item['name'])
+            check.setChecked(item['id'] in current_ids)
+            checks.append((item['id'], check))
+            layout.addWidget(check)
 
-        list_button = QPushButton('Add')
-        list_button.setIcon(make_icon('add'))
-        list_button.clicked.connect(
-            lambda: self.add_detail_to_list(anime['id'], list_box)
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Save
+            | QDialogButtonBox.StandardButton.Cancel
         )
-        list_row.addWidget(list_box, 1)
-        list_row.addWidget(list_button)
-        info.addLayout(list_row)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
 
-        current_lists = get_anime_lists(anime['id'])
-        info.addWidget(QLabel(
-            'Lists: ' + (', '.join(item['name'] for item in current_lists) or 'None')
-        ))
-        info.addStretch()
-        profile_layout.addLayout(info, 1)
-        page_layout.addWidget(profile)
+        if dialog.exec() != QDialog.DialogCode.Accepted:
 
-        description = online.get('synopsis') or anime.get('synopsis')
-        synopsis = QTextBrowser()
-        synopsis.setOpenExternalLinks(True)
-        synopsis.setHtml(
-            f'<h2>Synopsis</h2><p>{html.escape(self.value(description))}</p>'
-        )
-        page_layout.addWidget(synopsis, 1)
+            return
 
-        watch = QTextBrowser()
-        watch.setOpenExternalLinks(True)
-        watch.setMaximumHeight(130)
-        links = online.get('watch_links', [])
-        content = '<h2>Where to watch</h2>'
-        content += ''.join(
-            f'<p><a href="{link["url"]}">{html.escape(link["site"])}</a></p>'
-            for link in links[:8]
-        ) or '<p>Not available</p>'
-        if online.get('trailer_url'):
-            content += f'<p><a href="{online["trailer_url"]}">▶ Watch trailer</a></p>'
-        watch.setHtml(content)
-        page_layout.addWidget(watch)
+        selected = {list_id for list_id, check in checks if check.isChecked()}
+        from database.lists import remove_anime_from_list
 
-    def add_detail_to_list(self, anime_id, list_box):
-
-        list_id = list_box.currentData()
-
-        if list_id is not None:
+        for list_id in selected - current_ids:
 
             add_anime_to_list(list_id, anime_id)
-            self.show_detail(anime_id, self.detail_return_page)
+
+        for list_id in current_ids - selected:
+
+            remove_anime_from_list(list_id, anime_id)
+
+        self.show_detail(anime_id, self.detail_return_page)
 
     def toggle_detail_favorite(self, anime_id):
 
@@ -856,7 +1689,11 @@ class AnimeWindow(QMainWindow):
             if self.current_anime_id == anime_id:
 
                 self.render_detail(
-                    get_anime_with_genres(anime_id),
+                    next(
+                        item
+                        for item in self.animes
+                        if item['id'] == anime_id
+                    ),
                     media
                 )
 
@@ -885,3 +1722,29 @@ class AnimeWindow(QMainWindow):
     def value(value):
 
         return 'Not available' if value is None or value == '' else str(value)
+
+    @staticmethod
+    def offline_description(anime):
+
+        if anime.get('synopsis'):
+
+            return anime['synopsis']
+
+        genres = ', '.join(anime.get('genres', [])) or 'multiple genres'
+        year = anime.get('year') or 'an unknown year'
+        episodes = anime.get('episodes')
+        status = anime.get('status') or 'status not specified'
+
+        if episodes:
+
+            format_text = f'{episodes} episodes'
+
+        else:
+
+            format_text = 'episode count not specified'
+
+        return (
+            f"{anime['title']} is a {genres} anime from {year}. "
+            f"The local catalog lists {format_text} and a status of {status}. "
+            'A full plot synopsis is available when online AniList data is cached.'
+        )

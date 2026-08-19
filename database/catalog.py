@@ -918,6 +918,13 @@ ANIME_CATALOG = [
 ]
 
 
+from database.catalog_extra import EXPANDED_CATALOG
+
+ANIME_CATALOG.extend(
+    EXPANDED_CATALOG
+)
+
+
 # =========================
 # COMPLETED BASIC METADATA
 # =========================
